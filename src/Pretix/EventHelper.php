@@ -261,6 +261,7 @@ class EventHelper extends AbstractHelper {
       'date_from' => $this->formatDate($item->time_from),
       'date_to' => $this->formatDate($item->time_to),
       'location' => ['en' => $location],
+      'frontpage_text' => NULL,
       'geo_lat' => $geoLat,
       'get_lng' => $geoLng,
       'active' => TRUE,
