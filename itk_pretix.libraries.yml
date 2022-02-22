@@ -2,6 +2,14 @@ itk-pretix:
   version: VERSION
   css:
     theme:
-      build/itk_pretix_dawa.css: {}
+      build/form.css: {}
   js:
-    build/itk_pretix_dawa.js: {preprocess: false}
+    build/form.js: {preprocess: false}
+
+exporters:
+  version: VERSION
+  css:
+    theme:
+      build/exporters.css: {}
+  js:
+    build/exporters.js: {preprocess: false}

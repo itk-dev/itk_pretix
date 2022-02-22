@@ -1,0 +1,13 @@
+field.widget.settings.pretix_date_widget:
+  type: mapping
+  label: 'Pretix date widget settings'
+  mapping:
+    hide_end_date:
+      type: boolean
+      label: 'Hide end date'
+    spots_min:
+      type: integer
+      label: 'Spots min'
+    spots_max:
+      type: integer
+      label: 'Spots max'

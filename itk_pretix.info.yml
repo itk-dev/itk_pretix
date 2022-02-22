@@ -4,4 +4,5 @@ description: 'A module using pretix API to generate events from field values'
 core: 8.x
 package: 'ITK'
 dependencies:
-  - field
+  - drupal:field
+

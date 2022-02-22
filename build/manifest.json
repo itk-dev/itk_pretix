@@ -1,4 +1,6 @@
 {
-  "build/itk_pretix_dawa.css": "/build/itk_pretix_dawa.css",
-  "build/itk_pretix_dawa.js": "/build/itk_pretix_dawa.js"
+  "build/exporters.css": "/build/exporters.css",
+  "build/exporters.js": "/build/exporters.js",
+  "build/form.css": "/build/form.css",
+  "build/form.js": "/build/form.js"
 }

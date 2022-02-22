@@ -10,6 +10,16 @@
     "es6-object-assign": "^1.1.0",
     "jquery": "^3.4.1",
     "jquery-validation": "^1.19.1",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^7.0.1",
+    "standard": "^14.3.4",
     "terser-webpack-plugin": "^2.3.4"
+  },
+  "scripts": {
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production --progress",
+    "coding-standards-check": "standard 'assets/**/*.js'",
+    "coding-standards-apply": "standard 'assets/**/*.js' --fix"
   }
 }

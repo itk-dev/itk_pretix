@@ -1,0 +1,53 @@
+services:
+  itk_pretix.node_helper:
+    class: Drupal\itk_pretix\NodeHelper
+    arguments:
+      - '@itk_pretix.event_helper'
+      - '@messenger'
+
+  itk_pretix.event_helper:
+    class: Drupal\itk_pretix\Pretix\EventHelper
+    arguments:
+      - '@database'
+      - '@itk_pretix.order_helper'
+
+  itk_pretix.order_helper:
+    class: Drupal\itk_pretix\Pretix\OrderHelper
+    arguments:
+      - '@database'
+
+  itk_pretix.exporter_manager:
+    class: Drupal\itk_pretix\Exporter\Manager
+    lazy: true
+    arguments:
+      - '@file_system'
+      - '@itk_pretix.access_check'
+      - '@current_user'
+    tags:
+      - { name: service_collector, tag: itk_pretix_exporter, call: addEventExporter }
+
+  itk_pretix.exporter.itk_pretix_exporter_check_in_list:
+    class: Drupal\itk_pretix\Exporter\CheckInListExporter
+    lazy: true
+    tags:
+      - { name: itk_pretix_exporter }
+
+  itk_pretix.exporter.itk_pretix_exporter_check_in_list_pdf:
+    class: Drupal\itk_pretix\Exporter\CheckInListPdfExporter
+    lazy: true
+    tags:
+      - { name: itk_pretix_exporter }
+
+  itk_pretix.exporter.itk_pretix_exporter_orderlist:
+    class: Drupal\itk_pretix\Exporter\OrderListExporter
+    lazy: true
+    tags:
+      - { name: itk_pretix_exporter }
+
+  itk_pretix.access_check:
+    class: Drupal\itk_pretix\Access\AccessCheck
+    arguments:
+      - '@current_user'
+      - '@current_route_match'
+    tags:
+      - { name: access_check, applies_to: _itk_pretix_export_access_check }

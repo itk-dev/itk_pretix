@@ -1,11 +1,19 @@
 {
   "entrypoints": {
-    "itk_pretix_dawa": {
+    "form": {
       "css": [
-        "/build/itk_pretix_dawa.css"
+        "/build/form.css"
       ],
       "js": [
-        "/build/itk_pretix_dawa.js"
+        "/build/form.js"
+      ]
+    },
+    "exporters": {
+      "css": [
+        "/build/exporters.css"
+      ],
+      "js": [
+        "/build/exporters.js"
       ]
     }
   }

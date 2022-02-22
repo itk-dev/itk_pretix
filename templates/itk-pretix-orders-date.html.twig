@@ -1,0 +1,52 @@
+{#
+/**
+ * @file
+ * Template for displaying pretix data for a date.
+ *
+ * Available variables:
+ * - node: The node
+ * - event: The pretix event
+ * - sub_event: The pretix sub-event
+ * - order_positions: The pretix order positions
+ * - exports: exports
+ */
+#}
+<div class="pretix-orders-date">
+  <div class="d-flex justify-content-between">
+    <div>
+      <h1 class="event-name">
+        {{ event.getName|first }}
+      </h1>
+    </div>
+    <div>
+      {% if exports.csv.url|default(false) %}
+        <a class="btn btn-outline-secondary btn-sm" href="{{ exports.csv.url }}">{{ 'CSV'|t }}</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{{ 'Order code'|t({}, {context: 'itk_pretix'}) }}</th>
+        <th>{{ 'Name'|t({}, {context: 'itk_pretix'}) }}</th>
+        <th>{{ 'Email'|t({}, {context: 'itk_pretix'}) }}</th>
+        <th>{{ 'Price'|t({}, {context: 'itk_pretix'}) }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+        {% set order_url = order.getUrl %}
+        {% for position in order.getPositions %}
+          <tr>
+            <td>{{ position.getOrder }}</td>
+            <td>{{ position.getAttendeeName|default('–') }}</td>
+            <td>{{ position.getAttendeeEmail|default(order.getEmail|default('–')) }}</td>
+            <td>{{ position.getPrice }}</td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>

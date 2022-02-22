@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Template for displaying pretix data for a date.
+ *
+ * Available variables:
+ * - variables: An array containing data about the pretix date.
+ */
+#}
+<div class="pretix-date-data">
+  {% set pretix_subevent_url = data.data.pretix_subevent_url|default(false)%}
+  {% if pretix_subevent_url %}
+    <a class="pretix-subevent-url" href="{{ pretix_subevent_url }}">{{ 'Show sub-event in pretix' }}</a>
+  {% endif %}
+
+  {% set pretix_subevent_shop_url = data.data.pretix_subevent_shop_url|default(false)%}
+  {% if pretix_subevent_shop_url %}
+    <a class="pretix-subevent-shop-url" href="{{ pretix_subevent_shop_url }}">{{ 'Show sub-event in pretix shop' }}</a>
+  {% endif %}
+
+  {% set pretix_orders_list_url = data.pretix_orders_list_url|default(false)%}
+  {% if pretix_orders_list_url %}
+    <a class="pretix-order-list-url" href="{{ pretix_orders_list_url }}">{{ 'Show pretix orders' }}</a>
+  {% endif %}
+</div>

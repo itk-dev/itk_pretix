@@ -1,0 +1,14 @@
+<div class="itk-pretix-event-exporters">
+  {% if message %}
+    <div class="message">{{ message|raw }}</div>
+  {% endif %}
+
+  {% for exporter in exporter_forms %}
+    <fieldset>
+      <legend>{{ exporter.name }}</legend>
+
+      {{ exporter.form }}
+    </fieldset>
+  {% endfor %}
+
+</div>

@@ -1,6 +1,6 @@
-field.widget.settings.pretix_widget_type:
+field.widget.settings.pretix_date_widget_type:
   type: mapping
-  label: 'Pretix widget type widget settings'
+  label: 'Pretix date widget type settings'
   mapping:
     size:
       type: integer

@@ -7,8 +7,8 @@ Encore
     // the public path used by the web server to access the previous directory
     .setPublicPath('/build')
 
-    // will create .js
-    .addEntry('itk_pretix_dawa', './assets/js/dawa.js')
+    .addEntry('form', './assets/js/form.js')
+    .addEntry('exporters', './assets/js/exporters.js')
 
     .configureTerserPlugin(
       (options) => {
@@ -29,6 +29,8 @@ Encore
 
     // empty the outputPath dir before each build
     .cleanupOutputBeforeBuild()
+
+    .enableSassLoader()
 ;
 
 // export the final configuration

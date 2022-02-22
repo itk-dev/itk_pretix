@@ -2,8 +2,75 @@ itk_pretix.pretix_config_form:
   path: '/admin/config/itk_pretix/pretixconfig'
   defaults:
     _form: '\Drupal\itk_pretix\Form\PretixConfigForm'
-    _title: 'PretixConfigForm'
+    _title: 'Pretix settings'
   requirements:
     _permission: 'access administration pages'
   options:
+    _admin_route: TRUE
+
+itk_pretix.pretix_webhook:
+  path: '/itk_pretix/pretix/webhook'
+  defaults:
+    _controller: '\Drupal\itk_pretix\Controller\PretixWebhookController::main'
+    _title: 'pretix webhook'
+  methods: [POST]
+  requirements:
+    _permission: 'access content'
+
+itk_pretix.pretix_exporter_event:
+  path: '/itk_pretix/pretix/event/exporters/{node}'
+  defaults:
+    _controller: '\Drupal\itk_pretix\Controller\PretixEventExportersController::index'
+    _title: 'pretix exporters'
+  methods: [GET, POST]
+  requirements:
+    _itk_pretix_export_access_check: 'TRUE'
+  options:
+    parameters:
+      node:
+        type: entity:node
+    _admin_route: TRUE
+
+itk_pretix.pretix_exporter_event_show:
+  path: '/itk_pretix/pretix/event/exporters/{node}/exporter/{identifier}/show'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\itk_pretix\Controller\PretixEventExportersController::showExporter'
+    _title: 'pretix start exporter'
+  methods: [GET]
+  requirements:
+    _itk_pretix_export_access_check: 'TRUE'
+  options:
+    parameters:
+      node:
+        type: entity:node
+    _admin_route: TRUE
+
+itk_pretix.pretix_exporter_event_run:
+  path: '/itk_pretix/pretix/event/exporters/{node}/exporter/{identifier}/run'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\itk_pretix\Controller\PretixEventExportersController::runExporter'
+    _title: 'pretix start exporter'
+  methods: [GET]
+  requirements:
+    _itk_pretix_export_access_check: 'TRUE'
+  options:
+    parameters:
+      node:
+        type: entity:node
+    _admin_route: TRUE
+
+itk_pretix.pretix_exporter_event_run_show:
+  path: '/itk_pretix/pretix/event/exporters/{node}/exporter/{identifier}/run/{key}'
+  defaults:
+    _controller: '\Drupal\itk_pretix\Controller\PretixEventExportersController::showRun'
+    _title: 'pretix start exporter'
+  methods: [GET]
+  requirements:
+    _itk_pretix_export_access_check: 'TRUE'
+  options:
+    parameters:
+      node:
+        type: entity:node
     _admin_route: TRUE

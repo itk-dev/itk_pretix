@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * @file
+ * Installation file for the itk_pretix module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function itk_pretix_schema() {
+  return [
+    'itk_pretix_events' => [
+      'description' => 'Table to hold information about pretix events.',
+      'fields' => [
+        'nid' => [
+          'description' => 'The foreign key to {node}.nid',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ],
+        'pretix_organizer_slug' => [
+          'description' => 'The pretix organizer slug',
+          'type' => 'varchar',
+          'length' => 50,
+          'not null' => TRUE,
+          'default' => '',
+        ],
+        'pretix_event_slug' => [
+          'description' => 'The pretix event slug',
+          'type' => 'varchar',
+          'length' => 50,
+          'not null' => TRUE,
+          'default' => '',
+        ],
+        'data' => [
+          'description' => 'pretix data (JSON)',
+          'type' => 'text',
+          'size' => 'normal',
+          'not null' => FALSE,
+          'default' => NULL,
+        ],
+      ],
+      'primary key' => [
+        'nid',
+        'pretix_organizer_slug',
+        'pretix_event_slug',
+      ],
+    ],
+    'itk_pretix_subevents' => [
+      'description' => 'Table to hold information about pretix subevents.',
+      'fields' => [
+        'item_uuid' => [
+          'description' => 'The item uuid',
+          'type' => 'varchar',
+          'length' => 36,
+          'not null' => TRUE,
+        ],
+        'pretix_organizer_slug' => [
+          'description' => 'The pretix organizer slug',
+          'type' => 'varchar',
+          'length' => 50,
+          'not null' => TRUE,
+          'default' => '',
+        ],
+        'pretix_event_slug' => [
+          'description' => 'The pretix event slug',
+          'type' => 'varchar',
+          'length' => 50,
+          'not null' => TRUE,
+          'default' => '',
+        ],
+        'pretix_subevent_id' => [
+          'description' => 'The pretix subevent id',
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ],
+        'data' => [
+          'description' => 'pretix data (JSON)',
+          'type' => 'text',
+          'size' => 'normal',
+          'not null' => FALSE,
+          'default' => NULL,
+        ],
+      ],
+      'primary key' => [
+        'item_uuid',
+        'pretix_organizer_slug',
+        'pretix_event_slug',
+        'pretix_subevent_id',
+      ],
+    ],
+  ];
+}

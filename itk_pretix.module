@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_help().
@@ -31,6 +32,28 @@ function itk_pretix_theme() {
     'itk_pretix_date_entry' => [
       'template' => 'itk-pretix-date-entry',
       'variables' => ['variables' => NULL]
+    ],
+    'itk_pretix_date_data' => [
+      'template' => 'itk-pretix-date-data',
+      'variables' => ['data' => NULL]
+    ],
+    'itk_pretix_orders_date' => [
+      'template' => 'itk-pretix-orders-date',
+      'variables' => [
+        'node' => NULL,
+        'event' => NULL,
+        'sub_event' => NULL,
+        'orders' => NULL,
+        'exports' => NULL,
+      ],
+    ],
+    'itk_pretix_event_exporters' => [
+      'template' => 'itk-pretix-event-exporters',
+      'variables' => [
+        'node' => NULL,
+        'message' => NULL,
+        'exporter_forms' => NULL,
+      ],
     ],
   ];
 }
@@ -62,4 +85,40 @@ function _itk_pretix_process_datetime_element(array $element) {
 
   $element['time']['#attributes']['step'] = 60;
   return $element;
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function itk_pretix_node_insert(NodeInterface $node) {
+  \Drupal::service('itk_pretix.node_helper')->synchronizeEvent($node, 'insert');
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function itk_pretix_node_update(NodeInterface $node) {
+  \Drupal::service('itk_pretix.node_helper')->synchronizeEvent($node, 'update');
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function itk_pretix_node_delete(NodeInterface $node) {
+  \Drupal::service('itk_pretix.node_helper')->synchronizeEvent($node, 'delete');
+}
+
+/**
+ * Implements hook_cloned_node_alter().
+ */
+function itk_pretix_cloned_node_alter(NodeInterface $node) {
+  \Drupal::service('itk_pretix.node_helper')->clonedNodeAlter($node);
+}
+
+/**
+ * Implements hook_file_download().
+ */
+function itk_pretix_file_download($uri)
+{
+  return \Drupal::service('itk_pretix.exporter_manager')->fileDownload($uri);
 }
