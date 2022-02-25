@@ -1,7 +1,7 @@
 name: 'ITK Pretix'
 type: module
 description: 'A module using pretix API to generate events from field values'
-core: 8.x
+core_version_requirement: ^8 || ^9
 package: 'ITK'
 dependencies:
   - drupal:field
