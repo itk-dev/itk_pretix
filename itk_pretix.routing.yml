@@ -33,11 +33,10 @@ itk_pretix.pretix_exporter_event:
 
 itk_pretix.pretix_exporter_event_show:
   path: '/itk_pretix/pretix/event/exporters/{node}/exporter/{identifier}/show'
-  methods: [POST]
+  methods: [GET, POST]
   defaults:
     _controller: '\Drupal\itk_pretix\Controller\PretixEventExportersController::showExporter'
     _title: 'pretix start exporter'
-  methods: [GET]
   requirements:
     _itk_pretix_export_access_check: 'TRUE'
   options:
@@ -48,11 +47,10 @@ itk_pretix.pretix_exporter_event_show:
 
 itk_pretix.pretix_exporter_event_run:
   path: '/itk_pretix/pretix/event/exporters/{node}/exporter/{identifier}/run'
-  methods: [POST]
+  methods: [GET, POST]
   defaults:
     _controller: '\Drupal\itk_pretix\Controller\PretixEventExportersController::runExporter'
     _title: 'pretix start exporter'
-  methods: [GET]
   requirements:
     _itk_pretix_export_access_check: 'TRUE'
   options:
