@@ -80,6 +80,8 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
    * Process input parameters.
    */
   public function processInputParameters(array $parameters) {
+    unset($parameters['op'], $parameters['form_build_id'], $parameters['form_token'], $parameters['form_id']);
+
     return $parameters;
   }
 
