@@ -29,14 +29,10 @@
         "coding-standards-apply": [
             "@coding-standards-apply/phpcs"
         ],
-        "code-analysis/phan": [
-          "phan --allow-polyfill-parser"
-        ],
         "code-analysis/phpstan": [
           "phpstan analyse"
         ],
         "code-analysis": [
-          "@code-analysis/phan",
           "@code-analysis/phpstan"
         ]
     },
