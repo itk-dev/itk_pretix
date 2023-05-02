@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: [ '7.2', '7.3', '7.4',  '8.1' ]
+        php-versions: [ '7.3', '7.4',  '8.1' ]
         dependency-version: [ prefer-lowest, prefer-stable ]
     steps:
       - uses: actions/checkout@master
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: [ '7.2', '7.3', '7.4',  '8.1' ]
+        php-versions: [ '7.3', '7.4',  '8.1' ]
         dependency-version: [ prefer-lowest, prefer-stable ]
     steps:
       - uses: actions/checkout@master
@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-versions: [ '7.2', '7.3', '7.4',  '8.1' ]
+        php-versions: [ '7.3', '7.4',  '8.1' ]
         dependency-version: [ prefer-lowest, prefer-stable ]
     steps:
       - uses: actions/checkout@master
