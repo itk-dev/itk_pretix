@@ -30,7 +30,7 @@
             "@coding-standards-apply/phpcs"
         ],
         "code-analysis/phpstan": [
-          "phpstan analyse ."
+          "phpstan analyse"
         ],
         "code-analysis": [
           "@code-analysis/phpstan"
