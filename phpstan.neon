@@ -1,0 +1,10 @@
+parameters:
+  level: 5
+  paths:
+    - src
+    - tests
+  ignoreErrors:
+    -
+      # Ignore some weird errors reported by PHPStan
+      # @todo Investigate further
+      messages:
