@@ -10,6 +10,7 @@ parameters:
       - '#Missing cache backend declaration for performance.#'
       - '#Plugin manager has cache backend specified but does not declare cache tags.#'
       - '#ItkDev\\Pretix\\Api#'
+      - '#Doctrine\\Common\\Collections\\ArrayCollection#'
   reportUnmatchedIgnoredErrors: false
   excludePaths:
       - src/ProxyClass/*
