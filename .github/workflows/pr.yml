@@ -114,6 +114,7 @@ jobs:
           # Copy our module source code into the Drupal module folder.
           mkdir -p drupal/web/modules/contrib/itk_pretix
           cp -r itk_pretix.* composer.json src drupal/web/modules/contrib/itk_pretix
+          ls /home/runner/work/itk_pretix_d8/itk_pretix_d8/drupal/web/modules/contrib/itk_pretix
           # Add our module as a composer repository.
           composer --no-interaction --working-dir=drupal config repositories.itk-dev/itk_pretix path web/modules/contrib/itk_pretix
           # Restore Drupal composer repository.
