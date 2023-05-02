@@ -12,8 +12,7 @@
     "require-dev": {
         "drupal/coder": "^8.3.1",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-        "phan/phan": "^5.4",
-        "phpstan/phpstan": "^1.8"
+        "mglaman/drupal-check": "^1.4"
     },
     "scripts": {
         "coding-standards-check/phpcs": [
@@ -28,15 +27,11 @@
         "coding-standards-apply": [
             "@coding-standards-apply/phpcs"
         ],
-        "code-analysis/phan": [
-          "phan --allow-polyfill-parser"
-        ],
-        "code-analysis/phpstan": [
-          "phpstan analyse"
+        "code-analysis/drupal-check": [
+          "drupal-check --deprecations --analysis --exclude-dir=vendor,*/src/ProxyClass/* *.* src -vvv"
         ],
         "code-analysis": [
-          "@code-analysis/phan",
-          "@code-analysis/phpstan"
+          "@code-analysis/drupal-check"
         ]
     },
     "repositories": {
