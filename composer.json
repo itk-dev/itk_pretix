@@ -32,5 +32,10 @@
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         }
+    },
+    "config": {
+      "allow-plugins": {
+        "dealerdirect/phpcodesniffer-composer-installer": true
+      }
     }
 }
