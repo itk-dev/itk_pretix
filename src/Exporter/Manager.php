@@ -77,7 +77,7 @@ class Manager implements ManagerInterface {
    */
   public function getEventExporters(array $ids = NULL) {
     return array_filter($this->eventExporters, static function (ExporterInterface $exporter) use ($ids) {
-      return NULL === $ids || in_array($exporter->getId(), $ids, TRUE);
+        return NULL === $ids || in_array($exporter->getId(), $ids, TRUE);
     });
   }
 
@@ -154,10 +154,10 @@ class Manager implements ManagerInterface {
    */
   private function getExporterResultFileUrlInfo(string $uri) {
     if (preg_match(
-      '@^' . preg_quote(self::EXPORTER_RESULT_BASE_URL, '@') . '/(?P<nid>[^/]+)/(?P<filename>.+)$@',
-      $uri,
-      $matches
-    )) {
+          '@^' . preg_quote(self::EXPORTER_RESULT_BASE_URL, '@') . '/(?P<nid>[^/]+)/(?P<filename>.+)$@',
+          $uri,
+          $matches
+      )) {
       return [
         'nid' => $matches['nid'],
         'filename' => $matches['filename'],

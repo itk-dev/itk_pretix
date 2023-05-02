@@ -24,12 +24,12 @@ class PretixEventSettingsWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(
-    FieldItemListInterface $items,
-    $delta,
-    array $element,
-    array &$form,
-    FormStateInterface $form_state
-  ) {
+        FieldItemListInterface $items,
+        $delta,
+        array $element,
+        array &$form,
+        FormStateInterface $form_state
+    ) {
     /** @var \Drupal\node\Entity\Node $node */
     $node = $items->getParent()->getEntity();
     /** @var \Drupal\itk_pretix\NodeHelper $helper */
@@ -38,7 +38,7 @@ class PretixEventSettingsWidget extends WidgetBase {
     $templateEventOptions = [];
     foreach ($templateEvents as $event) {
       $names = $event->getName();
-      // @TODO Try to get name from current locale.
+      // @todo Try to get name from current locale.
       $name = reset($names);
       $templateEventOptions[$event->getSlug()] = sprintf('%s (%s)', $name, $event->getSlug());
     }
@@ -64,7 +64,7 @@ class PretixEventSettingsWidget extends WidgetBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Synchronize event in pretix'),
       '#description' => $this->t('If set, the pretix event will be updated when changes are made to the dates on this node'),
-      // The default value is TRUE for new nodes.
+        // The default value is TRUE for new nodes.
       '#default_value' => NULL === $node->id() ? TRUE : ($items[$delta]->synchronize_event ?? NULL),
     ];
 

@@ -66,8 +66,10 @@ class OrderHelper extends AbstractHelper {
       $items = $this->pretixClient->getItems($event);
     }
     catch (\Exception $exception) {
-      throw $this->clientException($this->t('Cannot get event items'),
-        $exception);
+      throw $this->clientException(
+            $this->t('Cannot get event items'),
+            $exception
+            );
     }
 
     // Index by id.
@@ -86,12 +88,16 @@ class OrderHelper extends AbstractHelper {
     foreach ($allQuotas as $quota) {
       foreach ($quota->getItems() as $itemId) {
         try {
-          $availability = $this->pretixClient->getQuotaAvailability($event,
-            $quota);
+          $availability = $this->pretixClient->getQuotaAvailability(
+                $event,
+                $quota
+            );
         }
         catch (\Exception $exception) {
-          throw $this->clientException('Cannot get quota availability',
-            $exception);
+          throw $this->clientException(
+                'Cannot get quota availability',
+                $exception
+                    );
         }
         $quota->setAvailability($availability);
         $quotas[$itemId][$quota->getSubevent()][] = $quota;
@@ -178,18 +184,24 @@ class OrderHelper extends AbstractHelper {
         ->getQuotas($event, ['query' => ['subevent' => $subEvent->getId()]]);
     }
     catch (\Exception $exception) {
-      throw $this->clientException($this->t('Cannot get quotas for sub-event'),
-        $exception);
+      throw $this->clientException(
+            $this->t('Cannot get quotas for sub-event'),
+            $exception
+            );
     }
 
     foreach ($quotas as $quota) {
       try {
-        $availability = $this->pretixClient->getQuotaAvailability($event,
-          $quota);
+        $availability = $this->pretixClient->getQuotaAvailability(
+              $event,
+              $quota
+          );
       }
       catch (\Exception $exception) {
-        throw $this->clientException($this->t('Cannot get quota availability'),
-          $exception);
+        throw $this->clientException(
+              $this->t('Cannot get quota availability'),
+              $exception
+                );
       }
       $quota->setAvailability($availability);
     }
@@ -207,8 +219,11 @@ class OrderHelper extends AbstractHelper {
    *   The webhook.
    */
   public function ensureWebhook(Client $client) {
-    $targetUrl = Url::fromRoute('itk_pretix.pretix_webhook', [],
-      ['absolute' => TRUE])->toString();
+    $targetUrl = Url::fromRoute(
+          'itk_pretix.pretix_webhook',
+          [],
+          ['absolute' => TRUE]
+      )->toString();
     $existingWebhook = NULL;
 
     $webhooks = $client->getWebhooks();
@@ -244,8 +259,8 @@ class OrderHelper extends AbstractHelper {
     ];
 
     return NULL === $existingWebhook
-      ? $client->createWebhook($webhookSettings)
-      : $client->updateWebhook($existingWebhook, $webhookSettings);
+          ? $client->createWebhook($webhookSettings)
+          : $client->updateWebhook($existingWebhook, $webhookSettings);
   }
 
   /**
@@ -260,22 +275,30 @@ class OrderHelper extends AbstractHelper {
   public function getSubEventAvailability(SubEvent $subEvent) {
     $event = $subEvent->getEvent();
     try {
-      $quotas = $this->pretixClient->getQuotas($event,
-        ['query' => ['subevent' => $subEvent->getId()]]);
+      $quotas = $this->pretixClient->getQuotas(
+            $event,
+            ['query' => ['subevent' => $subEvent->getId()]]
+        );
     }
     catch (\Exception $exception) {
-      throw $this->clientException('Cannot get quotas for sub-event',
-        $exception);
+      throw $this->clientException(
+            'Cannot get quotas for sub-event',
+            $exception
+            );
     }
 
     foreach ($quotas as $quota) {
       try {
-        $availability = $this->pretixClient->getQuotaAvailability($event,
-          $quota);
+        $availability = $this->pretixClient->getQuotaAvailability(
+              $event,
+              $quota
+          );
       }
       catch (\Exception $exception) {
-        throw $this->clientException('Cannot get quota availability',
-          $exception);
+        throw $this->clientException(
+              'Cannot get quota availability',
+              $exception
+                );
       }
       $quota->setAvailability($availability);
     }

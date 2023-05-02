@@ -27,14 +27,14 @@ class PretixDateFormatter extends FormatterBase {
 
     $dates = iterator_to_array($items);
 
-    // @TODO Get this from widget settings.
+    // @todo Get this from widget settings.
     $sortField = 'time_from';
     $sortDirection = 'desc';
 
     if (NULL !== $sortField) {
       // Sort ascending.
       usort($dates, static function (PretixDate $a, PretixDate $b) use ($sortField) {
-        return $a->{$sortField} <=> $b->{$sortField};
+          return $a->{$sortField} <=> $b->{$sortField};
       });
       // Reverse if requested.
       if (0 === strcasecmp('desc', $sortDirection)) {
@@ -53,8 +53,8 @@ class PretixDateFormatter extends FormatterBase {
           'time_to' => $item->time_to,
           'spots' => $item->spots,
           'data' => array_merge(
-            $item->data ?? [],
-            \Drupal::service('itk_pretix.event_helper')->loadPretixSubEventInfo($item) ?? []
+                $item->data ?? [],
+                \Drupal::service('itk_pretix.event_helper')->loadPretixSubEventInfo($item) ?? []
           ),
         ],
       ];

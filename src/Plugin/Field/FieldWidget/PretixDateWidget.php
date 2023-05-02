@@ -109,15 +109,17 @@ class PretixDateWidget extends WidgetBase {
 
     if (isset($item->uuid)) {
       $pretixOrdersUrl = $item->getEntity()->id()
-        ? Url::fromRoute('itk_pretix.pretix_orders_date',
-          [
-            'node' => $item->getEntity()->id(),
-            'uuid' => $item->uuid,
-          ], [
-            'absolute' => TRUE,
-          ]
-        )
-        : NULL;
+              ? Url::fromRoute(
+              'itk_pretix.pretix_orders_date',
+              [
+                'node' => $item->getEntity()->id(),
+                'uuid' => $item->uuid,
+              ],
+              [
+                'absolute' => TRUE,
+              ]
+          )
+              : NULL;
 
       $element['pretix_links'] = [
         '#type' => 'details',
@@ -125,9 +127,9 @@ class PretixDateWidget extends WidgetBase {
       ];
 
       $data = array_merge(
-        $item->data ?? [],
-        $eventHelper->loadPretixSubEventInfo($item) ?? []
-      );
+            $item->data ?? [],
+            $eventHelper->loadPretixSubEventInfo($item) ?? []
+        );
 
       if (isset($data['data']['pretix_subevent_url'])) {
         $url = Url::fromUri($data['data']['pretix_subevent_url']);
@@ -284,11 +286,11 @@ class PretixDateWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function errorElement(
-    array $element,
-    ConstraintViolationInterface $error,
-    array $form,
-    FormStateInterface $form_state
-  ) {
+        array $element,
+        ConstraintViolationInterface $error,
+        array $form,
+        FormStateInterface $form_state
+    ) {
     $propertyPath = preg_replace('/^\d+\./', '', $error->getPropertyPath());
     return $element[$propertyPath] ?? $element;
   }
