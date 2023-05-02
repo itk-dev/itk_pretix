@@ -6,8 +6,7 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-	"php": "^7.2||^8.1",
-        "itk-dev/pretix-api-client-php": "^1.0",
+	    "php": "^7.2||^8.1",
         "nicoeg/dawa": "^1.0"
     },
     "require-dev": {
