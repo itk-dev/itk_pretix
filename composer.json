@@ -25,6 +25,10 @@
         ],
         "coding-standards-apply": [
             "@coding-standards-apply/phpcs"
+        ],
+        "code-analysis": [
+          "@code-analysis/phan",
+          "@code-analysis/phpstan"
         ]
     },
     "repositories": {
