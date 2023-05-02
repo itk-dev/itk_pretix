@@ -113,7 +113,7 @@ jobs:
           composer --no-interaction create-project drupal/recommended-project:^9 --stability=dev drupal
           # Copy our module source code into the Drupal module folder.
           mkdir -p drupal/web/modules/contrib/itk_pretix
-          cp -r itk_pretix.* composer.json phpstan.neon src drupal/web/modules/contrib/itk_pretix
+          cp -r itk_pretix.* composer.json phpstan.neon tests src drupal/web/modules/contrib/itk_pretix
           # Add our module as a composer repository.
           composer --no-interaction --working-dir=drupal config repositories.itk-dev/itk_pretix path web/modules/contrib/itk_pretix
           # Restore Drupal composer repository.
