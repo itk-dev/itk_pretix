@@ -13,6 +13,7 @@
     <config name="drupal_core_version" value="9"/>
 
     <rule ref="Drupal">
+        <severity>5</severity>
         <!-- <exclude name="Drupal.Files.TxtFileLineLength.TooLong"/> -->
         <!-- We want to be able to use "package" and "version" in our custom modules -->
         <exclude name="Drupal.InfoFiles.AutoAddedKeys.Project"/>
