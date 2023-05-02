@@ -1,20 +1,20 @@
 <?php
 
-use Drupal\Core\Routing\UrlGeneratorInterface;
-use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\Core\Routing\RedirectDestinationInterface;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Utility\LinkGeneratorInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Form\FormBase;
-use ItkDev\Pretix\Api\Client;
-use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\itk_pretix\Exporter\ExporterInterface;
-
 namespace Drupal\itk_pretix\ProxyClass\Exporter {
+
+  use Drupal\Core\Routing\UrlGeneratorInterface;
+  use Drupal\Core\StringTranslation\TranslationInterface;
+  use Drupal\Core\Routing\RedirectDestinationInterface;
+  use Drupal\Core\Messenger\MessengerInterface;
+  use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+  use Drupal\Core\Utility\LinkGeneratorInterface;
+  use Symfony\Component\HttpFoundation\RequestStack;
+  use Drupal\Core\Config\ConfigFactoryInterface;
+  use Drupal\Core\Form\FormBase;
+  use ItkDev\Pretix\Api\Client;
+  use Drupal\Core\Form\FormStateInterface;
+  use Symfony\Component\DependencyInjection\ContainerInterface;
+  use Drupal\itk_pretix\Exporter\ExporterInterface;
 
   /**
    * Provides a proxy class for \Drupal\itk_pretix\Exporter\CheckInListExporter.

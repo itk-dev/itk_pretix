@@ -12,7 +12,7 @@ use ItkDev\Pretix\Api\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class PretixConfigForm.
+ * A configuration form for the pretix module.
  */
 class PretixConfigForm extends ConfigFormBase {
   /**

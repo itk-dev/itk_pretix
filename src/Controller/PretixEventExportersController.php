@@ -72,7 +72,7 @@ class PretixEventExportersController extends ControllerBase {
 
     $exporterForms = array_map(function (AbstractExporter $exporter) use ($node) {
         return [
-          'name' => $this->t($exporter->getName()),
+          'name' => $exporter->getName(),
           'form' => $this->buildForm($node, $exporter),
         ];
     }, $exporters);
