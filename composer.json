@@ -6,26 +6,34 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-	    "php": "^7.2||^8.1",
-        "nicoeg/dawa": "^1.0"
+      "php": "^7.2||^8.1",
+      "itk-dev/pretix-api-client-php": "^1.0",
+      "nicoeg/dawa": "^1.0"
     },
     "require-dev": {
-        "drupal/coder": "^8.3.1",
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+      "drupal/coder": "^8.3.1",
+      "friendsofphp/php-cs-fixer": "^3.11",
+      "phan/phan": "^5.4",
+      "phpstan/phpstan": "^1.8",
+      "squizlabs/php_codesniffer": "^3.7"
     },
     "scripts": {
-        "coding-standards-check/phpcs": [
-            "vendor/bin/phpcs --standard=phpcs.xml.dist"
-        ],
-        "coding-standards-check": [
-            "@coding-standards-check/phpcs"
-        ],
-        "coding-standards-apply/phpcs": [
-            "vendor/bin/phpcbf --standard=phpcs.xml.dist"
-        ],
-        "coding-standards-apply": [
-            "@coding-standards-apply/phpcs"
-        ]
+      "coding-standards-check/php-cs-fixer": [
+        "php-cs-fixer --config=.php-cs-fixer.dist.php fix --dry-run"
+      ],
+      "coding-standards-check": [
+        "@coding-standards-check/php-cs-fixer"
+      ],
+      "coding-standards-apply/php-cs-fixer": [
+        "php-cs-fixer --config=.php-cs-fixer.dist.php fix"
+      ],
+      "coding-standards-apply": [
+        "@coding-standards-apply/php-cs-fixer"
+      ],
+      "code-analysis": [
+        "@code-analysis/phan",
+        "@code-analysis/phpstan"
+      ]
     },
     "repositories": {
         "drupal": {
