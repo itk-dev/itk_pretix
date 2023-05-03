@@ -95,7 +95,7 @@ abstract class AbstractHelper {
   public function getPretixConfiguration(NodeInterface $node = NULL) {
     $config = \Drupal::config('itk_pretix.pretixconfig');
 
-    // @TODO Handle node, e.g. to get user specific configuration.
+    // @todo Handle node, e.g. to get user specific configuration.
     return $config->get();
   }
 
@@ -312,7 +312,7 @@ abstract class AbstractHelper {
    *   [field_name, item_id].
    */
   private function getItemKeys($item) {
-    if ($item instanceof \EntityDrupalWrapper) {
+    if ($item instanceof NodeInterface) {
       return [
         $item->field_name->value(),
         (int) $item->item_id->value(),
@@ -394,7 +394,7 @@ abstract class AbstractHelper {
       ->fetchAssoc();
 
     return isset($item['item_uuid'])
-      // @TODO Refactor helpers to prevent this circular dependency.
+      // @todo Refactor helpers to prevent this circular dependency.
       ? \Drupal::service('itk_pretix.node_helper')->loadDateItem($item['item_uuid'])
       : NULL;
   }
@@ -403,7 +403,7 @@ abstract class AbstractHelper {
    * Handle a pretix api client exception.
    */
   protected function clientException(string $message, \Exception $clientException = NULL) {
-    // @TODO Log the exception.
+    // @todo Log the exception.
     if (NULL === $clientException) {
       \Drupal::logger('itk_pretix')->error($message);
     }

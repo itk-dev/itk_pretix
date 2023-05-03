@@ -77,7 +77,7 @@ class Manager implements ManagerInterface {
    */
   public function getEventExporters(array $ids = NULL) {
     return array_filter($this->eventExporters, static function (ExporterInterface $exporter) use ($ids) {
-      return NULL === $ids || in_array($exporter->getId(), $ids, TRUE);
+        return NULL === $ids || in_array($exporter->getId(), $ids, TRUE);
     });
   }
 
@@ -103,7 +103,7 @@ class Manager implements ManagerInterface {
       $this->fileSystem->saveData((string) $response->getBody(), $filePath, FileSystem::EXISTS_REPLACE);
       $this->fileSystem->saveData(json_encode($response->getHeaders()), $filePath . '.headers', FileSystem::EXISTS_REPLACE);
 
-      return file_create_url($url);
+      return \Drupal::service('file_url_generator')->generateAbsoluteString($url);
     }
 
     return NULL;
@@ -154,10 +154,10 @@ class Manager implements ManagerInterface {
    */
   private function getExporterResultFileUrlInfo(string $uri) {
     if (preg_match(
-      '@^' . preg_quote(self::EXPORTER_RESULT_BASE_URL, '@') . '/(?P<nid>[^/]+)/(?P<filename>.+)$@',
-      $uri,
-      $matches
-    )) {
+          '@^' . preg_quote(self::EXPORTER_RESULT_BASE_URL, '@') . '/(?P<nid>[^/]+)/(?P<filename>.+)$@',
+          $uri,
+          $matches
+      )) {
       return [
         'nid' => $matches['nid'],
         'filename' => $matches['filename'],

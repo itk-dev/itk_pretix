@@ -8,7 +8,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\itk_pretix\Pretix\EventHelper;
 use ItkDev\Pretix\Api\Client;
 use ItkDev\Pretix\Api\Entity\CheckInList;
-use RuntimeException;
 
 /**
  * Abstract exporter.
@@ -47,7 +46,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
    */
   public function getId() {
     if (NULL === static::$id) {
-      throw new RuntimeException(sprintf('Property id not defined in class %s', static::class));
+      throw new \RuntimeException(sprintf('Property id not defined in class %s', static::class));
     }
     return static::$id;
   }
@@ -57,7 +56,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
    */
   public function getName() {
     if (NULL === static::$name) {
-      throw new RuntimeException(sprintf('Property name not defined in class %s', static::class));
+      throw new \RuntimeException(sprintf('Property name not defined in class %s', static::class));
     }
     return static::$name;
   }
@@ -73,7 +72,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    throw new RuntimeException();
+    throw new \RuntimeException();
   }
 
   /**
@@ -172,22 +171,22 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
       $defaultList = $checkInLists->filter($isDefaultList)->first();
       if (!$defaultList) {
         $defaultList = $this->client->createCheckInList(
-          $this->eventInfo[EventHelper::PRETIX_EVENT_SLUG],
-          [
-            'name' => $defaultName,
-          ]
-        );
+              $this->eventInfo[EventHelper::PRETIX_EVENT_SLUG],
+              [
+                'name' => $defaultName,
+              ]
+          );
         $checkInLists->add($defaultList);
       }
 
       [$head, $tail] = $checkInLists->partition(static function ($key, $list) use ($isDefaultList) {
-        return $isDefaultList($list);
+          return $isDefaultList($list);
       });
 
       // Make sure that the default list is first in collection.
       self::$checkInLists[$event] = new ArrayCollection(
-        array_merge($head->toArray(FALSE), $tail->toArray(FALSE))
-      );
+            array_merge($head->toArray(FALSE), $tail->toArray(FALSE))
+        );
     }
 
     return self::$checkInLists[$event];

@@ -71,10 +71,10 @@ class PretixEventExportersController extends ControllerBase {
     $exporters = $this->exporterManager->getEventExporters($enabled);
 
     $exporterForms = array_map(function (AbstractExporter $exporter) use ($node) {
-      return [
-        'name' => $this->t($exporter->getName()),
-        'form' => $this->buildForm($node, $exporter),
-      ];
+        return [
+          'name' => $exporter->getName(),
+          'form' => $this->buildForm($node, $exporter),
+        ];
     }, $exporters);
 
     return [
@@ -178,8 +178,11 @@ class PretixEventExportersController extends ControllerBase {
       case Response::HTTP_NOT_FOUND:
       default:
         $this->session->remove($key);
-        $this->messenger()->addError(sprintf('%d: %s', $response->getStatusCode(),
-          json_encode((string) $response->getBody())));
+        $this->messenger()->addError(sprintf(
+          '%d: %s',
+          $response->getStatusCode(),
+          json_encode((string) $response->getBody())
+          ));
         return $this->redirect('itk_pretix.pretix_exporter_event', [
           'node' => $node->id(),
         ]);
