@@ -394,9 +394,9 @@ abstract class AbstractHelper {
       ->fetchAssoc();
 
     return isset($item['item_uuid'])
-          // @todo Refactor helpers to prevent this circular dependency.
-          ? \Drupal::service('itk_pretix.node_helper')->loadDateItem($item['item_uuid'])
-          : NULL;
+      // @todo Refactor helpers to prevent this circular dependency.
+      ? \Drupal::service('itk_pretix.node_helper')->loadDateItem($item['item_uuid'])
+      : NULL;
   }
 
   /**
