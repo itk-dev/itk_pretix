@@ -14,7 +14,8 @@
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
         "phpstan/extension-installer": "^1.2",
         "mglaman/phpstan-drupal": "^1.1",
-        "phpstan/phpstan-deprecation-rules": "^1.1"
+        "phpstan/phpstan-deprecation-rules": "^1.1",
+        "itk-dev/pretix-api-client-php": "^1.0"
     },
     "scripts": {
         "coding-standards-check/phpcs": [
