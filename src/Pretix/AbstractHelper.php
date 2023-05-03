@@ -312,7 +312,7 @@ abstract class AbstractHelper {
    *   [field_name, item_id].
    */
   private function getItemKeys($item) {
-    if ($item instanceof \Entity) {
+    if ($item instanceof NodeInterface) {
       return [
         $item->field_name->value(),
         (int) $item->item_id->value(),
