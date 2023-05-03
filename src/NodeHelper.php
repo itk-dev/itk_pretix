@@ -78,6 +78,7 @@ class NodeHelper {
    */
   public function loadDateItem(string $uuid) {
     $query = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
       ->condition('field_pretix_dates.uuid', $uuid);
 
     $nids = $query->execute();
@@ -134,12 +135,12 @@ class NodeHelper {
     if (NULL !== $dates && !$dates->isEmpty()) {
       try {
         $this->eventHelper->syncronizePretixEvent(
-          $node,
-          [
-            'dates' => $dates,
-            'settings' => $settings,
-          ]
-        );
+              $node,
+              [
+                'dates' => $dates,
+                'settings' => $settings,
+              ]
+          );
       }
       catch (\Exception $exception) {
         $this->messenger->addError($this->t('There was a problem updating the event in pretix. Please verify in pretix that all settings for the event are correct.'));
@@ -161,25 +162,25 @@ class NodeHelper {
         $result = $this->eventHelper->setEventLive($node, $live);
 
         $message = $live
-          ? t('Successfully set <a href="@pretix_event_url">the pretix event</a> live.', [
-            '@pretix_event_url' => $pretixEventUrl,
-          ])
-            : t('Successfully set <a href="@pretix_event_url">the pretix event</a> not live.', [
-              '@pretix_event_url' => $pretixEventUrl,
-            ]);
+                  ? t('Successfully set <a href="@pretix_event_url">the pretix event</a> live.', [
+                    '@pretix_event_url' => $pretixEventUrl,
+                  ])
+                    : t('Successfully set <a href="@pretix_event_url">the pretix event</a> not live.', [
+                      '@pretix_event_url' => $pretixEventUrl,
+                    ]);
         $this->messenger->addStatus($message);
       }
       catch (\Exception $exception) {
         $error = $exception->getMessage();
         $message = $live
-          ? t('Error setting <a href="@pretix_event_url">the pretix event</a> live: @error', [
-            '@pretix_event_url' => $pretixEventUrl,
-            '@error' => $error,
-          ])
-              : t('Error setting <a href="@pretix_event_url">the pretix event</a> not live: @error', [
-                '@pretix_event_url' => $pretixEventUrl,
-                '@errors' => $error,
-              ]);
+                  ? t('Error setting <a href="@pretix_event_url">the pretix event</a> live: @error', [
+                    '@pretix_event_url' => $pretixEventUrl,
+                    '@error' => $error,
+                  ])
+                      : t('Error setting <a href="@pretix_event_url">the pretix event</a> not live: @error', [
+                        '@pretix_event_url' => $pretixEventUrl,
+                        '@errors' => $error,
+                      ]);
         $this->messenger->addError($message);
       }
     }
