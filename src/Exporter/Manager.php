@@ -103,7 +103,7 @@ class Manager implements ManagerInterface {
       $this->fileSystem->saveData((string) $response->getBody(), $filePath, FileSystem::EXISTS_REPLACE);
       $this->fileSystem->saveData(json_encode($response->getHeaders()), $filePath . '.headers', FileSystem::EXISTS_REPLACE);
 
-      return file_create_url($url);
+      return \Drupal::service('file_url_generator')->generateAbsoluteString($url);
     }
 
     return NULL;

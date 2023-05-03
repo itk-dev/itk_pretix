@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * A configuration form for the pretix module.
  */
-class PretixConfigForm extends ConfigFormBase {
+final class PretixConfigForm extends ConfigFormBase {
   /**
    * The event helper.
    *

@@ -78,6 +78,7 @@ class NodeHelper {
    */
   public function loadDateItem(string $uuid) {
     $query = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
       ->condition('field_pretix_dates.uuid', $uuid);
 
     $nids = $query->execute();
