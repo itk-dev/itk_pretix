@@ -312,7 +312,7 @@ abstract class AbstractHelper {
    *   [field_name, item_id].
    */
   private function getItemKeys($item) {
-    if ($item instanceof \EntityDrupalWrapper) {
+    if ($item instanceof \Entity) {
       return [
         $item->field_name->value(),
         (int) $item->item_id->value(),
