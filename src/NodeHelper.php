@@ -7,9 +7,9 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\itk_pretix\Pretix\EventHelper;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\itk_pretix\Pretix\EventHelper;
 
 /**
  * Node helper.
