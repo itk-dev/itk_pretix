@@ -14,7 +14,7 @@
         "drupal/coder": "^8.3.1",
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
         "phpstan/extension-installer": "^1.2",
-        "mglaman/phpstan-drupal": "^1.1",
+        "mglaman/phpstan-drupal": "^1.2",
         "phpstan/phpstan-deprecation-rules": "^1.1"
     },
     "scripts": {
