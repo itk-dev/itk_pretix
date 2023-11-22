@@ -112,7 +112,6 @@ class PretixWebhookController extends ControllerBase {
       ->fetchAssoc();
 
     return isset($item['item_uuid'])
-      // @todo Refactor helpers to prevent this circular dependency.
       ? $this->nodeHelper->loadDateItem($item['item_uuid'])
       : NULL;
   }
