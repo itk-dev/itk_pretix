@@ -229,7 +229,7 @@ final class PretixConfigForm extends ConfigFormBase {
 
     try {
       $this->orderHelper->ensureWebhook($client);
-      \Drupal::messenger()->addStatus($this->t('pretix webhook created'));
+      $this->messenger->addStatus($this->t('pretix webhook created'));
     }
     catch (\Exception $exception) {
       $form_state->setErrorByName('pretix_url', $this->t('Cannot create webhook in pretix'));

@@ -2,9 +2,12 @@
 
 namespace Drupal\itk_pretix\Pretix;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\itk_pretix\Exception\SynchronizeException;
+use Drupal\itk_pretix\NodeHelper;
 use Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
@@ -26,35 +29,38 @@ abstract class AbstractHelper {
    *
    * @var \ItkDev\Pretix\Api\Client
    */
-  protected $pretixClient;
+  protected Client $pretixClient;
 
   /**
-   * The database.
-   *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected $database;
-
-  /**
-   * Constructor.
+   * Constructor for abstract helper class.
    *
    * @param \Drupal\Core\Database\Connection $database
-   *   The database.
+   *   The database connection.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
+   * @param \Drupal\itk_pretix\NodeHelper $nodeHelper
+   *   The node helper.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
+   *   The logger factory.
    */
-  public function __construct(Connection $database) {
-    $this->database = $database;
+  public function __construct(
+    private readonly Connection $database,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly NodeHelper $nodeHelper,
+    private readonly LoggerChannelFactoryInterface $loggerFactory
+  ) {
   }
 
   /**
    * Set pretix client.
    *
-   * @param \Drupal\itk_pretix\Pretix\Client $pretixClient
+   * @param \ItkDev\Pretix\Api\Client $pretixClient
    *   The client.
    *
    * @return \Drupal\itk_pretix\Pretix\AbstractHelper
    *   The helper.
    */
-  public function setPretixClient(Client $pretixClient) {
+  public function setPretixClient(Client $pretixClient): static {
     $this->pretixClient = $pretixClient;
 
     return $this;
@@ -69,7 +75,7 @@ abstract class AbstractHelper {
    * @return \ItkDev\Pretix\Api\Client
    *   The client if any.
    */
-  public function getPretixClient(NodeInterface $node) {
+  public function getPretixClient(NodeInterface $node): Client {
     if (NULL === $this->pretixClient) {
       $config = $this->getPretixConfiguration($node);
 
@@ -92,8 +98,8 @@ abstract class AbstractHelper {
    * @return array
    *   The configuration.
    */
-  public function getPretixConfiguration(NodeInterface $node = NULL) {
-    $config = \Drupal::config('itk_pretix.pretixconfig');
+  public function getPretixConfiguration(NodeInterface $node = NULL): array {
+    $config = $this->configFactory->get('itk_pretix.pretixconfig');
 
     // @todo Handle node, e.g. to get user specific configuration.
     return $config->get();
@@ -110,7 +116,7 @@ abstract class AbstractHelper {
    * @return null|NodeInterface
    *   The node if found.
    */
-  public function getNode($organizer, $event) {
+  public function getNode($organizer, $event): ?NodeInterface {
     $organizerSlug = $this->getSlug($organizer);
     $eventSlug = $this->getSlug($event);
 
@@ -136,7 +142,7 @@ abstract class AbstractHelper {
    * @return array|null
    *   The info if any.
    */
-  public function loadPretixEventInfo(NodeInterface $node, $reset = FALSE) {
+  public function loadPretixEventInfo(NodeInterface $node, $reset = FALSE): ?array {
     $nid = $node->id();
     $info = &drupal_static(__METHOD__, []);
 
@@ -178,7 +184,7 @@ abstract class AbstractHelper {
    *
    * @throws \Exception
    */
-  protected function addPretixEventInfo(NodeInterface $node, Event $event, array $data, $reset = FALSE) {
+  protected function addPretixEventInfo(NodeInterface $node, Event $event, array $data, $reset = FALSE): array {
     $info = $this->loadPretixEventInfo($node, TRUE);
 
     // The values to store in the database.
@@ -231,7 +237,7 @@ abstract class AbstractHelper {
    *
    * @throws \Exception
    */
-  public function addPretixSubEventInfo(PretixDate $item, SubEvent $subEvent, array $data, $reset = FALSE) {
+  public function addPretixSubEventInfo(PretixDate $item, SubEvent $subEvent, array $data, $reset = FALSE): array {
     $info = $this->loadPretixSubEventInfo($item, TRUE);
     // The values to store in the database.
     $fields = [];
@@ -279,7 +285,7 @@ abstract class AbstractHelper {
    * @return array|null
    *   The sub-event data.
    */
-  public function loadPretixSubEventInfo(PretixDate $item, bool $reset = FALSE) {
+  public function loadPretixSubEventInfo(PretixDate $item, bool $reset = FALSE): ?array {
     $info = &drupal_static(__METHOD__, []);
 
     if ($reset || !isset($info[$item->uuid])) {
@@ -311,7 +317,7 @@ abstract class AbstractHelper {
    * @return array
    *   [field_name, item_id].
    */
-  private function getItemKeys($item) {
+  private function getItemKeys($item): array {
     if ($item instanceof NodeInterface) {
       return [
         $item->field_name->value(),
@@ -334,7 +340,7 @@ abstract class AbstractHelper {
    * @return string
    *   The object slug.
    */
-  protected function getSlug($object) {
+  protected function getSlug($object): object|string {
     return $object->slug ?? $object;
   }
 
@@ -347,7 +353,7 @@ abstract class AbstractHelper {
    * @return string|null
    *   The pretix event shop url if any.
    */
-  public function getPretixEventShopUrl($node) {
+  public function getPretixEventShopUrl($node): ?string {
     $info = $this->loadPretixEventInfo($node);
 
     return $info['data']['pretix_event_shop_url'] ?? NULL;
@@ -364,7 +370,7 @@ abstract class AbstractHelper {
    * @return string|null
    *   The pretix event url if any.
    */
-  public function getPretixEventUrl($node, $path = '') {
+  public function getPretixEventUrl($node, $path = ''): ?string {
     $info = $this->loadPretixEventInfo($node);
 
     if (isset($info['data']['pretix_event_url'])) {
@@ -382,8 +388,12 @@ abstract class AbstractHelper {
    *
    * @return \Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate|null
    *   The date item.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function loadDateItem(SubEvent $subEvent) {
+  public function loadDateItem(SubEvent $subEvent): ?PretixDate {
     $item = $this->database
       ->select('itk_pretix_subevents', 'p')
       ->fields('p')
@@ -395,20 +405,20 @@ abstract class AbstractHelper {
 
     return isset($item['item_uuid'])
       // @todo Refactor helpers to prevent this circular dependency.
-      ? \Drupal::service('itk_pretix.node_helper')->loadDateItem($item['item_uuid'])
+      ? $this->nodeHelper->loadDateItem($item['item_uuid'])
       : NULL;
   }
 
   /**
    * Handle a pretix api client exception.
    */
-  protected function clientException(string $message, \Exception $clientException = NULL) {
+  protected function clientException(string $message, \Exception $clientException = NULL): SynchronizeException {
     // @todo Log the exception.
     if (NULL === $clientException) {
-      \Drupal::logger('itk_pretix')->error($message);
+      $this->loggerFactory->get('itk_pretix')->error($message);
     }
     else {
-      \Drupal::logger('itk_pretix')->error('@message: @client_message: ', [
+      $this->loggerFactory->get('itk_pretix')->error('@message: @client_message: ', [
         '@message' => $message,
         '@client_message' => $clientException->getMessage(),
         'client_exception' => $clientException,

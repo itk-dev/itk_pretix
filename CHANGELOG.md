@@ -8,16 +8,24 @@ See ["how do I make a good changelog record?"](https://keepachangelog.com/en/1.0
 before starting to add changes.
 
 ## [Unreleased]
+
+- Make module ready for d-10
+
+## 1.1.0
+
 - Basic github actions added
 - Update php requirements
 
 ## 1.0.1 - 1.0.3
+
 - Minor changes.
 
 ## 1.0.0
+
 - Initial release
 
 ## Example of change log record
+
 ```
 ## [x.x.x] Release name
 ### Added

@@ -3,13 +3,19 @@
 namespace Drupal\itk_pretix;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate;
+use Drupal\itk_pretix\Pretix\EventHelper;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\itk_pretix\Pretix\EventHelper;
 
 /**
  * Node helper.
@@ -19,22 +25,23 @@ class NodeHelper {
   use MessengerTrait;
 
   /**
-   * The event helper.
-   *
-   * @var \Drupal\itk_pretix\Pretix\EventHelper
-   */
-  private $eventHelper;
-
-  /**
    * Constructor.
    *
    * @param \Drupal\itk_pretix\Pretix\EventHelper $eventHelper
    *   The event helper.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\Core\Extension\ModuleHandler $moduleHandler
+   *   The module handler.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    */
-  public function __construct(EventHelper $eventHelper, MessengerInterface $messenger) {
-    $this->eventHelper = $eventHelper;
+  public function __construct(
+    private readonly EventHelper $eventHelper,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ModuleHandlerInterface $moduleHandler,
+    MessengerInterface $messenger
+  ) {
     $this->setMessenger($messenger);
   }
 
@@ -48,10 +55,8 @@ class NodeHelper {
    *
    * @return \Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate|null
    *   The date item if any.
-   *
-   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function getDateItem(NodeInterface $node, string $uuid) {
+  public function getDateItem(NodeInterface $node, string $uuid): ?PretixDate {
     $field = $this->getFieldByType($node, 'pretix_date');
 
     if (NULL !== $field) {
@@ -71,13 +76,15 @@ class NodeHelper {
    * @param string $uuid
    *   The uuid.
    *
-   * @return null|PretixDateFieldType
+   * @return \Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate|null
    *   The date item.
    *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function loadDateItem(string $uuid) {
-    $query = \Drupal::entityQuery('node')
+  public function loadDateItem(string $uuid): ?PretixDate {
+    $query = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(FALSE)
       ->condition('field_pretix_dates.uuid', $uuid);
 
@@ -94,12 +101,12 @@ class NodeHelper {
    * @param \Drupal\node\NodeInterface $node
    *   The node.
    *
-   * @return \Doctrine\Common\Collections\Collection
+   * @return \Doctrine\Common\Collections\ArrayCollection|\Doctrine\Common\Collections\Collection
    *   A collection of template events.
    */
-  public function getTemplateEvents(NodeInterface $node) {
+  public function getTemplateEvents(NodeInterface $node): ArrayCollection|Collection {
     $field = $this->getFieldByType($node, 'pretix_date');
-    $dateCardinality = $field->getFieldDefinition()->getFieldStorageDefinition()->getCardinality();
+    $field->getFieldDefinition()->getFieldStorageDefinition()->getCardinality();
     $events = [];
 
     $client = $this->eventHelper->getPretixClient($node);
@@ -124,8 +131,10 @@ class NodeHelper {
    *   The node.
    * @param string $action
    *   The action triggering the synchronization.
+   *
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function synchronizeEvent(NodeInterface $node, string $action) {
+  public function synchronizeEvent(NodeInterface $node, string $action): void {
     $settings = $this->getPretixSettings($node);
     if (NULL === $settings || !$settings->synchronize_event) {
       return;
@@ -156,7 +165,7 @@ class NodeHelper {
       $live = $node->isPublished();
 
       // Allow modules to change shop state.
-      \Drupal::moduleHandler()->alter('itk_pretix_shop_live', $live, $node);
+      $this->moduleHandler->alter('itk_pretix_shop_live', $live, $node);
 
       try {
         $result = $this->eventHelper->setEventLive($node, $live);
@@ -192,7 +201,7 @@ class NodeHelper {
    * @param \Drupal\node\NodeInterface $node
    *   The cloned node.
    */
-  public function clonedNodeAlter(NodeInterface $node) {
+  public function clonedNodeAlter(NodeInterface $node): void {
     $dates = $this->getFieldByType($node, 'pretix_date');
 
     if (NULL !== $dates) {
@@ -212,7 +221,7 @@ class NodeHelper {
    * @return \Drupal\Core\Field\FieldItemListInterface|null
    *   A list of dates if a pretix_date field exists on the node.
    */
-  private function getPretixDates(NodeInterface $node) {
+  private function getPretixDates(NodeInterface $node): ?FieldItemListInterface {
     $items = $this->getFieldByType($node, 'pretix_date');
 
     if (NULL !== $items) {
@@ -236,15 +245,15 @@ class NodeHelper {
    * @param \Drupal\node\NodeInterface $node
    *   The node.
    *
-   * @return \Drupal\itk_pretix\Plugin\Field\FieldType\PretixEventSettings|null
+   * @return \Drupal\Core\TypedData\TypedDataInterface
    *   The settings if a pretix_event_settings field exists on the node.
    *
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function getPretixSettings(NodeInterface $node) {
+  public function getPretixSettings(NodeInterface $node): TypedDataInterface {
     $items = $this->getFieldByType($node, 'pretix_event_settings');
 
-    return NULL !== $items ? $items->first() : NULL;
+    return $items?->first();
   }
 
   /**
@@ -258,7 +267,7 @@ class NodeHelper {
    *
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function getSynchronizeWithPretix(NodeInterface $node) {
+  public function getSynchronizeWithPretix(NodeInterface $node): bool {
     return $this->getPretixSettings($node)->synchronize_event ?? FALSE;
   }
 
@@ -275,7 +284,7 @@ class NodeHelper {
    * @return \Drupal\Core\Field\FieldItemListInterface|null
    *   A field with the specified type if found.
    */
-  private function getFieldByType(NodeInterface $node, string $fieldType) {
+  private function getFieldByType(NodeInterface $node, string $fieldType): ?FieldItemListInterface {
     $fields = $node->getFields();
     foreach ($fields as $field) {
       if ($fieldType === $field->getFieldDefinition()->getType()) {

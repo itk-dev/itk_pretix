@@ -3,6 +3,7 @@
 namespace Drupal\itk_pretix\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\itk_pretix\Exception\ExporterException;
 use Drupal\itk_pretix\Exporter\AbstractExporter;
@@ -60,8 +61,8 @@ class PretixEventExportersController extends ControllerBase {
    *   The node.
    */
   public function index(Request $request, NodeInterface $node) {
-    if (!\Drupal::hasService('stream_wrapper.private')) {
-      \Drupal::messenger()->addError($this->t('Private path must be set up to run exporters.'));
+    if (!Settings::get('file_private_path')) {
+      $this->messenger->addError($this->t('Private path must be set up to run exporters.'));
       throw new BadRequestHttpException(__FILE__);
     }
 

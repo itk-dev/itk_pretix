@@ -3,10 +3,14 @@
 namespace Drupal\itk_pretix\Pretix;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\itk_pretix\Exception\ExporterException;
+use Drupal\itk_pretix\NodeHelper;
 use Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate;
 use Drupal\node\NodeInterface;
 use ItkDev\Pretix\Api\Client;
@@ -26,19 +30,42 @@ class EventHelper extends AbstractHelper {
    *
    * @var \Drupal\itk_pretix\Pretix\OrderHelper
    */
-  private $orderHelper;
+  private OrderHelper $orderHelper;
+
+  /**
+   * The module handler interface.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  private ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructor.
    *
    * @param \Drupal\Core\Database\Connection $database
    *   The database.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
+   * @param \Drupal\itk_pretix\NodeHelper $nodeHelper
+   *   The nodehelper.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
+   *   The logger factory.
    * @param \Drupal\itk_pretix\Pretix\OrderHelper $orderHelper
    *   The order helper.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   THe module handler interface.
    */
-  public function __construct(Connection $database, OrderHelper $orderHelper) {
-    parent::__construct($database);
+  public function __construct(
+    Connection $database,
+    ConfigFactoryInterface $configFactory,
+    NodeHelper $nodeHelper,
+    LoggerChannelFactoryInterface $loggerFactory,
+    OrderHelper $orderHelper,
+    ModuleHandlerInterface $moduleHandler
+  ) {
+    parent::__construct($database, $configFactory, $nodeHelper, $loggerFactory);
     $this->orderHelper = $orderHelper;
+    $this->moduleHandler = $moduleHandler;
   }
 
   /**
@@ -84,7 +111,7 @@ class EventHelper extends AbstractHelper {
     $context = [
       'is_new_event' => $isNewEvent,
     ];
-    \Drupal::moduleHandler()->alter('itk_pretix_event_data', $data, $node, $context);
+    $this->moduleHandler->alter('itk_pretix_event_data', $data, $node, $context);
 
     $eventData = [];
     if ($isNewEvent) {
@@ -282,7 +309,7 @@ class EventHelper extends AbstractHelper {
       'event' => $event,
       'pretix_date' => $item,
     ];
-    \Drupal::moduleHandler()->alter('itk_pretix_subevent_data', $data, $node, $context);
+    $this->moduleHandler->alter('itk_pretix_subevent_data', $data, $node, $context);
 
     // Important: meta_data value must be an object!
     $data['meta_data'] = (object) ($data['meta_data'] ?? []);

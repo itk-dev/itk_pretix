@@ -2,9 +2,13 @@
 
 namespace Drupal\itk_pretix\Plugin\Field\FieldWidget;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\itk_pretix\NodeHelper;
+use Drupal\itk_pretix\Pretix\EventHelper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'pretix_event_settings_widget_type' widget.
@@ -18,7 +22,45 @@ use Drupal\Core\Form\FormStateInterface;
  *   }
  * )
  */
-class PretixEventSettingsWidget extends WidgetBase {
+final class PretixEventSettingsWidget extends WidgetBase {
+
+  /**
+   * The event helper.
+   *
+   * @var \Drupal\itk_pretix\Pretix\EventHelper
+   */
+  private EventHelper $eventHelper;
+
+  /**
+   * Thee node helper.
+   *
+   * @var \Drupal\itk_pretix\NodeHelper
+   */
+  private NodeHelper $nodeHelper;
+
+  /**
+   * Date widget constructor.
+   */
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EventHelper $eventHelper, NodeHelper $nodeHelper) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
+    $this->eventHelper = $eventHelper;
+    $this->nodeHelper = $nodeHelper;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['third_party_settings'],
+      $container->get('itk_pretix.event_helper'),
+      $container->get('itk_pretix.node_helper')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -32,8 +74,7 @@ class PretixEventSettingsWidget extends WidgetBase {
     ) {
     /** @var \Drupal\node\Entity\Node $node */
     $node = $items->getParent()->getEntity();
-    /** @var \Drupal\itk_pretix\NodeHelper $helper */
-    $helper = \Drupal::service('itk_pretix.node_helper');
+    $helper = $this->nodeHelper;
     $templateEvents = $helper->getTemplateEvents($node);
     $templateEventOptions = [];
     foreach ($templateEvents as $event) {

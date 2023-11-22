@@ -3,13 +3,19 @@ services:
     class: Drupal\itk_pretix\NodeHelper
     arguments:
       - '@itk_pretix.event_helper'
+      - '@entity_type.manager'
+      - '@module_handler'
       - '@messenger'
 
   itk_pretix.event_helper:
     class: Drupal\itk_pretix\Pretix\EventHelper
     arguments:
       - '@database'
+      - '@config.factory'
+      - '@itk_pretix.node_helper'
+      - '@logger.factory'
       - '@itk_pretix.order_helper'
+      - '@module_handler'
 
   itk_pretix.order_helper:
     class: Drupal\itk_pretix\Pretix\OrderHelper
