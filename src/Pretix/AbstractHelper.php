@@ -7,7 +7,6 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\itk_pretix\Exception\SynchronizeException;
-use Drupal\itk_pretix\NodeHelper;
 use Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;

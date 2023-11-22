@@ -10,7 +10,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\itk_pretix\Exception\ExporterException;
-use Drupal\itk_pretix\NodeHelper;
 use Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate;
 use Drupal\node\NodeInterface;
 use ItkDev\Pretix\Api\Client;
