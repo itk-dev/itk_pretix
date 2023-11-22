@@ -38,15 +38,12 @@ abstract class AbstractHelper {
    *   The database connection.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
-   * @param \Drupal\itk_pretix\NodeHelper $nodeHelper
-   *   The node helper.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   The logger factory.
    */
   public function __construct(
     private readonly Connection $database,
     private readonly ConfigFactoryInterface $configFactory,
-    private readonly NodeHelper $nodeHelper,
     private readonly LoggerChannelFactoryInterface $loggerFactory
   ) {
   }
@@ -378,35 +375,6 @@ abstract class AbstractHelper {
     }
 
     return NULL;
-  }
-
-  /**
-   * Load the date item associated with a sub-event.
-   *
-   * @param \ItkDev\Pretix\Api\Entity\SubEvent $subEvent
-   *   The sub-event.
-   *
-   * @return \Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate|null
-   *   The date item.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
-   */
-  public function loadDateItem(SubEvent $subEvent): ?PretixDate {
-    $item = $this->database
-      ->select('itk_pretix_subevents', 'p')
-      ->fields('p')
-      ->condition('pretix_organizer_slug', $subEvent->getOrganizerSlug(), '=')
-      ->condition('pretix_event_slug', $subEvent->getEventSlug(), '=')
-      ->condition('pretix_subevent_id', $subEvent->getId(), '=')
-      ->execute()
-      ->fetchAssoc();
-
-    return isset($item['item_uuid'])
-      // @todo Refactor helpers to prevent this circular dependency.
-      ? $this->nodeHelper->loadDateItem($item['item_uuid'])
-      : NULL;
   }
 
   /**
