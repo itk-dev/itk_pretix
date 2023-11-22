@@ -3,6 +3,7 @@
 namespace Drupal\itk_pretix\Exporter;
 
 use Drupal\Core\File\FileSystem;
+use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\itk_pretix\Access\AccessCheck;
@@ -33,34 +34,14 @@ class Manager implements ManagerInterface {
   private $eventExporterForms;
 
   /**
-   * The file system.
-   *
-   * @var \Drupal\Core\File\FileSystem
-   */
-  private $fileSystem;
-
-  /**
-   * The access checker.
-   *
-   * @var \Drupal\itk_pretix\Access\AccessCheck
-   */
-  private $accessCheck;
-
-  /**
-   * The current account.
-   *
-   * @var \Drupal\Core\Session\AccountInterface
-   */
-  private $currentUser;
-
-  /**
    * Constructor.
    */
-  public function __construct(FileSystem $fileSystem, AccessCheck $accessCheck, AccountInterface $currentUser) {
-    $this->fileSystem = $fileSystem;
-    $this->accessCheck = $accessCheck;
-    $this->currentUser = $currentUser;
-  }
+  public function __construct(
+    private readonly FileSystem $fileSystem,
+    private readonly AccessCheck $accessCheck,
+    private readonly AccountInterface $currentUser,
+    private readonly FileUrlGenerator $fileUrlGenerator
+  ) {}
 
   /**
    * Add an event exporter.
@@ -103,7 +84,7 @@ class Manager implements ManagerInterface {
       $this->fileSystem->saveData((string) $response->getBody(), $filePath, FileSystem::EXISTS_REPLACE);
       $this->fileSystem->saveData(json_encode($response->getHeaders()), $filePath . '.headers', FileSystem::EXISTS_REPLACE);
 
-      return \Drupal::service('file_url_generator')->generateAbsoluteString($url);
+      return $this->fileUrlGenerator->generateAbsoluteString($url);
     }
 
     return NULL;
