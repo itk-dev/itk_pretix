@@ -6,9 +6,9 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\itk_pretix\NodeHelper;
 use Drupal\itk_pretix\Pretix\EventHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\itk_pretix\NodeHelper;
 
 /**
  * Plugin implementation of the 'pretix_event_settings_widget_type' widget.

@@ -38,6 +38,10 @@ abstract class AbstractHelper {
    *   The database connection.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
+   * @param \Drupal\itk_pretix\NodeHelper $nodeHelper
+   *   The node helper.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
+   *   The logger factory.
    */
   public function __construct(
     private readonly Connection $database,
