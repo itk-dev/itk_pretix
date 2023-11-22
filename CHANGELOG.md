@@ -9,10 +9,11 @@ before starting to add changes.
 
 ## [Unreleased]
 
-- Make module ready for d-10
+- Remove circular reference in services
 
 ## 1.1.0
 
+- Make module ready for d-10
 - Basic github actions added
 - Update php requirements
 

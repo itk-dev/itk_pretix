@@ -3,6 +3,9 @@
 namespace Drupal\itk_pretix\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
+use Drupal\itk_pretix\NodeHelper;
+use Drupal\itk_pretix\Pretix\EventHelper;
 use Drupal\itk_pretix\Pretix\OrderHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,21 +22,28 @@ class PretixWebhookController extends ControllerBase {
    *
    * @var \Drupal\itk_pretix\Pretix\OrderHelper
    */
-  private $orderHelper;
+  private OrderHelper $orderHelper;
 
   /**
    * The node helper.
    *
    * @var \Drupal\itk_pretix\NodeHelper
    */
-  private $nodeHelper;
+  private NodeHelper $nodeHelper;
 
   /**
    * The event helper.
    *
    * @var \Drupal\itk_pretix\Pretix\EventHelper
    */
-  private $eventHelper;
+  private EventHelper $eventHelper;
+
+  /**
+   * The database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  private Connection $database;
 
   /**
    * {@inheritdoc}
@@ -43,6 +53,7 @@ class PretixWebhookController extends ControllerBase {
     $instance->orderHelper = $container->get('itk_pretix.order_helper');
     $instance->nodeHelper = $container->get('itk_pretix.node_helper');
     $instance->eventHelper = $container->get('itk_pretix.event_helper');
+    $instance->database = $container->get('database');
 
     return $instance;
   }
@@ -56,7 +67,9 @@ class PretixWebhookController extends ControllerBase {
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   The payload.
    *
-   * @see https://docs.pretix.eu/en/latest/api/webhooks.html#receiving-webhooks
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function main(Request $request) {
     $payload = json_decode($request->getContent(), TRUE);
@@ -76,6 +89,35 @@ class PretixWebhookController extends ControllerBase {
   }
 
   /**
+   * Load the date item associated with a sub-event.
+   *
+   * @param \ItkDev\Pretix\Api\Entity\SubEvent $subEvent
+   *   The sub-event.
+   *
+   * @return \Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate|null
+   *   The date item.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
+   */
+  public function loadDateItem(SubEvent $subEvent): ?PretixDate {
+    $item = $this->database
+      ->select('itk_pretix_subevents', 'p')
+      ->fields('p')
+      ->condition('pretix_organizer_slug', $subEvent->getOrganizerSlug(), '=')
+      ->condition('pretix_event_slug', $subEvent->getEventSlug(), '=')
+      ->condition('pretix_subevent_id', $subEvent->getId(), '=')
+      ->execute()
+      ->fetchAssoc();
+
+    return isset($item['item_uuid'])
+      // @todo Refactor helpers to prevent this circular dependency.
+      ? $this->nodeHelper->loadDateItem($item['item_uuid'])
+      : NULL;
+  }
+
+  /**
    * Handle order updated.
    *
    * @param array $payload
@@ -86,7 +128,9 @@ class PretixWebhookController extends ControllerBase {
    * @return array
    *   The payload.
    *
-   * @throws \InvalidMergeQueryException
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   private function handleOrderUpdated(array $payload, $action) {
     $organizerSlug = $payload['organizer'] ?? NULL;
@@ -125,7 +169,7 @@ class PretixWebhookController extends ControllerBase {
 
           $quotas = $this->orderHelper->getSubEventAvailability($subEvent);
           $subEventData['availability'] = $quotas->toArray();
-          $item = $this->eventHelper->loadDateItem($subEvent);
+          $item = $this->loadDateItem($subEvent);
           $this->orderHelper->addPretixSubEventInfo($item, $subEvent, $subEventData);
         }
       }

@@ -46,8 +46,6 @@ class EventHelper extends AbstractHelper {
    *   The database.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
-   * @param \Drupal\itk_pretix\NodeHelper $nodeHelper
-   *   The nodehelper.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   The logger factory.
    * @param \Drupal\itk_pretix\Pretix\OrderHelper $orderHelper
@@ -58,12 +56,11 @@ class EventHelper extends AbstractHelper {
   public function __construct(
     Connection $database,
     ConfigFactoryInterface $configFactory,
-    NodeHelper $nodeHelper,
     LoggerChannelFactoryInterface $loggerFactory,
     OrderHelper $orderHelper,
     ModuleHandlerInterface $moduleHandler
   ) {
-    parent::__construct($database, $configFactory, $nodeHelper, $loggerFactory);
+    parent::__construct($database, $configFactory, $loggerFactory);
     $this->orderHelper = $orderHelper;
     $this->moduleHandler = $moduleHandler;
   }

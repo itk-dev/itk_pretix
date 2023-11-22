@@ -12,7 +12,6 @@ services:
     arguments:
       - '@database'
       - '@config.factory'
-      - '@itk_pretix.node_helper'
       - '@logger.factory'
       - '@itk_pretix.order_helper'
       - '@module_handler'
