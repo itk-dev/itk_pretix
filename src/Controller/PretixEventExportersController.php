@@ -3,6 +3,7 @@
 namespace Drupal\itk_pretix\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\itk_pretix\Exception\ExporterException;
 use Drupal\itk_pretix\Exporter\AbstractExporter;
@@ -60,8 +61,8 @@ class PretixEventExportersController extends ControllerBase {
    *   The node.
    */
   public function index(Request $request, NodeInterface $node) {
-    if (!\Drupal::hasService('stream_wrapper.private')) {
-      \Drupal::messenger()->addError($this->t('Private path must be set up to run exporters.'));
+    if (!Settings::get('file_private_path')) {
+      $this->messenger->addError($this->t('Private path must be set up to run exporters.'));
       throw new BadRequestHttpException(__FILE__);
     }
 
@@ -71,10 +72,10 @@ class PretixEventExportersController extends ControllerBase {
     $exporters = $this->exporterManager->getEventExporters($enabled);
 
     $exporterForms = array_map(function (AbstractExporter $exporter) use ($node) {
-      return [
-        'name' => $this->t($exporter->getName()),
-        'form' => $this->buildForm($node, $exporter),
-      ];
+        return [
+          'name' => $exporter->getName(),
+          'form' => $this->buildForm($node, $exporter),
+        ];
     }, $exporters);
 
     return [
@@ -178,8 +179,11 @@ class PretixEventExportersController extends ControllerBase {
       case Response::HTTP_NOT_FOUND:
       default:
         $this->session->remove($key);
-        $this->messenger()->addError(sprintf('%d: %s', $response->getStatusCode(),
-          json_encode((string) $response->getBody())));
+        $this->messenger()->addError(sprintf(
+          '%d: %s',
+          $response->getStatusCode(),
+          json_encode((string) $response->getBody())
+          ));
         return $this->redirect('itk_pretix.pretix_exporter_event', [
           'node' => $node->id(),
         ]);

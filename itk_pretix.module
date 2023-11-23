@@ -31,11 +31,11 @@ function itk_pretix_theme() {
   return [
     'itk_pretix_date_entry' => [
       'template' => 'itk-pretix-date-entry',
-      'variables' => ['variables' => NULL]
+      'variables' => ['variables' => NULL],
     ],
     'itk_pretix_date_data' => [
       'template' => 'itk-pretix-date-data',
-      'variables' => ['data' => NULL]
+      'variables' => ['data' => NULL],
     ],
     'itk_pretix_orders_date' => [
       'template' => 'itk-pretix-orders-date',
@@ -70,6 +70,7 @@ function itk_pretix_element_info_alter(array &$types) {
  *
  * @param array $element
  *   The form element.
+ *
  * @return mixed
  *   The modified form element.
  */
@@ -118,7 +119,6 @@ function itk_pretix_cloned_node_alter(NodeInterface $node) {
 /**
  * Implements hook_file_download().
  */
-function itk_pretix_file_download($uri)
-{
+function itk_pretix_file_download($uri) {
   return \Drupal::service('itk_pretix.exporter_manager')->fileDownload($uri);
 }

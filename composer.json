@@ -6,13 +6,16 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {
-        "php": "^7.2",
-        "itk-dev/pretix-api-client-php": "^1.0",
-        "nicoeg/dawa": "^1.0"
+        "php": "^8.1",
+        "nicoeg/dawa": "^1.0",
+        "itk-dev/pretix-api-client-php": "^1.1"
     },
     "require-dev": {
         "drupal/coder": "^8.3.1",
-        "dealerdirect/phpcodesniffer-composer-installer": "dev-master"
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "mglaman/phpstan-drupal": "^1.1",
+        "phpstan/extension-installer": "^1.3",
+        "phpstan/phpstan-deprecation-rules": "^1.1"
     },
     "scripts": {
         "coding-standards-check/phpcs": [
@@ -26,6 +29,12 @@
         ],
         "coding-standards-apply": [
             "@coding-standards-apply/phpcs"
+        ],
+        "code-analysis/phpstan": [
+          "phpstan analyse --configuration=phpstan.neon"
+        ],
+        "code-analysis": [
+          "@code-analysis/phpstan"
         ]
     },
     "repositories": {
@@ -33,5 +42,11 @@
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         }
+    },
+    "config": {
+      "allow-plugins": {
+        "dealerdirect/phpcodesniffer-composer-installer": true,
+        "phpstan/extension-installer": true
+      }
     }
 }

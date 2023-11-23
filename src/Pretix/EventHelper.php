@@ -3,9 +3,12 @@
 namespace Drupal\itk_pretix\Pretix;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\itk_pretix\Exception\ExporterException;
 use Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate;
 use Drupal\node\NodeInterface;
@@ -26,19 +29,39 @@ class EventHelper extends AbstractHelper {
    *
    * @var \Drupal\itk_pretix\Pretix\OrderHelper
    */
-  private $orderHelper;
+  private OrderHelper $orderHelper;
+
+  /**
+   * The module handler interface.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  private ModuleHandlerInterface $moduleHandler;
 
   /**
    * Constructor.
    *
    * @param \Drupal\Core\Database\Connection $database
    *   The database.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
+   *   The logger factory.
    * @param \Drupal\itk_pretix\Pretix\OrderHelper $orderHelper
    *   The order helper.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   THe module handler interface.
    */
-  public function __construct(Connection $database, OrderHelper $orderHelper) {
-    parent::__construct($database);
+  public function __construct(
+    Connection $database,
+    ConfigFactoryInterface $configFactory,
+    LoggerChannelFactoryInterface $loggerFactory,
+    OrderHelper $orderHelper,
+    ModuleHandlerInterface $moduleHandler
+  ) {
+    parent::__construct($database, $configFactory, $loggerFactory);
     $this->orderHelper = $orderHelper;
+    $this->moduleHandler = $moduleHandler;
   }
 
   /**
@@ -71,7 +94,7 @@ class EventHelper extends AbstractHelper {
     $location = $this->getLocation($firstDate);
     $startDate = $firstDate->get('time_from')->getValue();
 
-    // @TODO Handle locales?
+    // @todo Handle locales?
     $data = [
       'name' => ['en' => $name],
       'currency' => 'DKK',
@@ -84,7 +107,7 @@ class EventHelper extends AbstractHelper {
     $context = [
       'is_new_event' => $isNewEvent,
     ];
-    \Drupal::moduleHandler()->alter('itk_pretix_event_data', $data, $node, $context);
+    $this->moduleHandler->alter('itk_pretix_event_data', $data, $node, $context);
 
     $eventData = [];
     if ($isNewEvent) {
@@ -181,10 +204,10 @@ class EventHelper extends AbstractHelper {
       }
     }
     catch (\Exception $exception) {
-      // @TODO Do something clever here.
+      // @todo Do something clever here.
     }
 
-    // @TODO Clean up info on pretix sub-events.
+    // @todo Clean up info on pretix sub-events.
     return $info;
   }
 
@@ -243,9 +266,9 @@ class EventHelper extends AbstractHelper {
       unset($data['id']);
 
       $data['item_price_overrides'] = [
-        [
-          'item' => $product->getId(),
-        ],
+          [
+            'item' => $product->getId(),
+          ],
       ];
     }
     else {
@@ -255,7 +278,7 @@ class EventHelper extends AbstractHelper {
     $location = $this->getLocation($item);
     [$geoLat, $geoLng] = $item->data['coordinates'] ?? [NULL, NULL];
 
-    // @TODO Handle locales.
+    // @todo Handle locales.
     $data = array_merge($data, [
       'name' => ['en' => $this->getEventName($node)],
       'date_from' => $this->formatDate($item->time_from),
@@ -272,7 +295,7 @@ class EventHelper extends AbstractHelper {
       'seat_category_mapping' => (object) [],
     ]);
 
-    // @TODO Handle prices.
+    // @todo Handle prices.
     $price = 0;
     $data['item_price_overrides'][0]['price'] = $price;
 
@@ -282,7 +305,7 @@ class EventHelper extends AbstractHelper {
       'event' => $event,
       'pretix_date' => $item,
     ];
-    \Drupal::moduleHandler()->alter('itk_pretix_subevent_data', $data, $node, $context);
+    $this->moduleHandler->alter('itk_pretix_subevent_data', $data, $node, $context);
 
     // Important: meta_data value must be an object!
     $data['meta_data'] = (object) ($data['meta_data'] ?? []);
@@ -307,8 +330,10 @@ class EventHelper extends AbstractHelper {
 
     // Get sub-event quotas.
     try {
-      $quotas = $client->getQuotas($event,
-        ['query' => ['subevent' => $subEvent->getId()]]);
+      $quotas = $client->getQuotas(
+            $event,
+            ['query' => ['subevent' => $subEvent->getId()]]
+        );
     }
     catch (\Exception $exception) {
       throw $this->clientException($this->t('Cannot get sub-event quotas'), $exception);
@@ -318,9 +343,9 @@ class EventHelper extends AbstractHelper {
       // Create a new quota for the sub-event.
       try {
         $templateQuotas = $client->getQuotas(
-          $templateEvent,
-          ['subevent' => $templateSubEvent->getId()]
-        );
+              $templateEvent,
+              ['subevent' => $templateSubEvent->getId()]
+          );
       }
       catch (\Exception $exception) {
         throw $this->clientException($this->t('Cannot get template sub-event quotas'), $exception);
@@ -364,7 +389,7 @@ class EventHelper extends AbstractHelper {
         ->setPretixClient($client)
         ->getSubEventAvailabilities($subEvent);
       $subEventData['availability'] = $availabilities->map(static function (Quota $quota) {
-        return $quota->toArray();
+          return $quota->toArray();
       })->toArray();
     }
     catch (\Exception $exception) {
@@ -488,7 +513,7 @@ class EventHelper extends AbstractHelper {
    *   If null all is good. Otherwise, returns list of [key, error-message]
    */
   public function validateTemplateEvent(Event $event, Client $client) {
-    // @TODO Currently, we only support events with (multiple) dates.
+    // @todo Currently, we only support events with (multiple) dates.
     if (!$event->hasSubevents()) {
       return [
         'event_slug' => t('This event does not have sub-events.'),

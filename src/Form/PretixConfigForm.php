@@ -12,9 +12,9 @@ use ItkDev\Pretix\Api\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class PretixConfigForm.
+ * A configuration form for the pretix module.
  */
-class PretixConfigForm extends ConfigFormBase {
+final class PretixConfigForm extends ConfigFormBase {
   /**
    * The event helper.
    *
@@ -51,11 +51,11 @@ class PretixConfigForm extends ConfigFormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('config.factory'),
-      $container->get('itk_pretix.event_helper'),
-      $container->get('itk_pretix.order_helper'),
-      $container->get('itk_pretix.exporter_manager')
-    );
+          $container->get('config.factory'),
+          $container->get('itk_pretix.event_helper'),
+          $container->get('itk_pretix.order_helper'),
+          $container->get('itk_pretix.exporter_manager')
+      );
   }
 
   /**
@@ -201,9 +201,13 @@ class PretixConfigForm extends ConfigFormBase {
 
     $invalidTemplateEventSlugs = array_diff($templateEventSlugs, array_keys($templateEvents));
     if (!empty($invalidTemplateEventSlugs)) {
-      $form_state->setErrorByName('template_event_slugs',
-        $this->t('Invalid template event slugs: @event_slugs',
-          ['@event_slugs' => implode(', ', $invalidTemplateEventSlugs)]));
+      $form_state->setErrorByName(
+            'template_event_slugs',
+            $this->t(
+                'Invalid template event slugs: @event_slugs',
+                ['@event_slugs' => implode(', ', $invalidTemplateEventSlugs)]
+            )
+        );
       return;
     }
 
@@ -212,19 +216,20 @@ class PretixConfigForm extends ConfigFormBase {
       if (is_array($error)) {
         // We only show the first error message.
         $message = reset($error);
-        $form_state->setErrorByName('template_event_slugs',
-          $this->t('Event @event_slug is not a valid template: @message', [
-            '@event_slug' => $event->getSlug(),
-            '@message' => $message,
-          ])
-        );
+        $form_state->setErrorByName(
+              'template_event_slugs',
+              $this->t('Event @event_slug is not a valid template: @message', [
+                '@event_slug' => $event->getSlug(),
+                '@message' => $message,
+              ])
+          );
         return;
       }
     }
 
     try {
       $this->orderHelper->ensureWebhook($client);
-      \Drupal::messenger()->addStatus($this->t('pretix webhook created'));
+      $this->messenger->addStatus($this->t('pretix webhook created'));
     }
     catch (\Exception $exception) {
       $form_state->setErrorByName('pretix_url', $this->t('Cannot create webhook in pretix'));

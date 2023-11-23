@@ -26,8 +26,8 @@ class PretixEventSettings extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function propertyDefinitions(
-    FieldStorageDefinitionInterface $field_definition
-  ) {
+        FieldStorageDefinitionInterface $field_definition
+    ) {
     $properties['template_event'] = DataDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Template event'))
       ->setRequired(TRUE);
@@ -42,8 +42,8 @@ class PretixEventSettings extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function schema(
-    FieldStorageDefinitionInterface $field_definition
-  ) {
+        FieldStorageDefinitionInterface $field_definition
+    ) {
     return [
       'columns' => [
         'template_event' => [

@@ -1,0 +1,10 @@
+parameters:
+  paths:
+    - .
+  level: 0
+  customRulesetUsed: true
+  reportUnmatchedIgnoredErrors: false
+  excludePaths:
+      - src/ProxyClass/*
+      - vendor
+      - '*/node_modules/*'
