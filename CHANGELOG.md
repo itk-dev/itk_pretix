@@ -11,6 +11,14 @@ before starting to add changes.
 
 - Remove circular reference in services
 
+## 1.2.1
+
+- Fix bug in order service
+
+## 1.2.0
+
+- Remove cirkular reference
+
 ## 1.1.0
 
 - Make module ready for d-10
