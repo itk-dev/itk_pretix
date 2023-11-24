@@ -20,6 +20,8 @@ services:
     class: Drupal\itk_pretix\Pretix\OrderHelper
     arguments:
       - '@database'
+      - '@config.factory'
+      - '@logger.factory'
 
   itk_pretix.exporter_manager:
     class: Drupal\itk_pretix\Exporter\Manager

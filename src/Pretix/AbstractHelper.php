@@ -26,9 +26,9 @@ abstract class AbstractHelper {
   /**
    * The pretix client.
    *
-   * @var \ItkDev\Pretix\Api\Client
+   * @var \ItkDev\Pretix\Api\Client|null
    */
-  protected Client $pretixClient;
+  protected ?Client $pretixClient = NULL;
 
   /**
    * Constructor for abstract helper class.

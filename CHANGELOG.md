@@ -9,7 +9,18 @@ before starting to add changes.
 
 ## [Unreleased]
 
+## 1.2.2
+
+- Allow nullabale pretix client
 - Remove circular reference in services
+
+## 1.2.1
+
+- Fix bug in order service
+
+## 1.2.0
+
+- Remove cirkular reference
 
 ## 1.1.0
 

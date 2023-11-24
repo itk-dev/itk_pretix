@@ -245,12 +245,12 @@ class NodeHelper {
    * @param \Drupal\node\NodeInterface $node
    *   The node.
    *
-   * @return \Drupal\Core\TypedData\TypedDataInterface
+   * @return \Drupal\Core\TypedData\TypedDataInterface|null
    *   The settings if a pretix_event_settings field exists on the node.
    *
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function getPretixSettings(NodeInterface $node): TypedDataInterface {
+  public function getPretixSettings(NodeInterface $node): ?TypedDataInterface {
     $items = $this->getFieldByType($node, 'pretix_event_settings');
 
     return $items?->first();
