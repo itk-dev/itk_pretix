@@ -9,6 +9,9 @@ before starting to add changes.
 
 ## [Unreleased]
 
+## 1.2.3
+- Add missing service reference
+
 ## 1.2.2
 
 - Allow nullabale pretix client
