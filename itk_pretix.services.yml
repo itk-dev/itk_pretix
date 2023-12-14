@@ -30,6 +30,7 @@ services:
       - '@file_system'
       - '@itk_pretix.access_check'
       - '@current_user'
+      - '@file_url_generator'
     tags:
       - { name: service_collector, tag: itk_pretix_exporter, call: addEventExporter }
 
