@@ -98,6 +98,21 @@ final class PretixDateWidget extends WidgetBase {
       '#required' => $element['#required'],
     ];
 
+    $element['registration_deadline_value'] = [
+      '#title' => t('Registration deadline'),
+      '#type' => 'datetime',
+      '#default_value' => NULL,
+      '#date_increment' => 1,
+      '#date_timezone' => date_default_timezone_get(),
+      '#required' => $element['#required'],
+    ];
+
+    if ($items[$delta]->registration_deadline) {
+      /** @var \Drupal\Core\Datetime\DrupalDateTime $registration_deadline */
+      $registration_deadline = $items[$delta]->registration_deadline;
+      $element['registration_deadline_value']['#default_value'] = $this->createDefaultValue($registration_deadline, $element['registration_deadline_value']['#date_timezone']);
+    }
+
     $element['time_from_value'] = [
       '#title' => t('Start time'),
       '#type' => 'datetime',
@@ -225,6 +240,14 @@ final class PretixDateWidget extends WidgetBase {
     $user_timezone = new \DateTimeZone(date_default_timezone_get());
 
     foreach ($values as &$item) {
+      if (!empty($item['registration_deadline_value']) && $item['registration_deadline_value'] instanceof DrupalDateTime) {
+        /** @var \Drupal\Core\Datetime\DrupalDateTime $time_from */
+        $registration_deadline = $item['registration_deadline_value'];
+
+        // Adjust the date for storage.
+        $item['registration_deadline_value'] = $registration_deadline->setTimezone($storage_timezone)->format($storage_format);
+      }
+
       if (!empty($item['time_from_value']) && $item['time_from_value'] instanceof DrupalDateTime) {
         /** @var \Drupal\Core\Datetime\DrupalDateTime $time_from */
         $time_from = $item['time_from_value'];
@@ -341,11 +364,16 @@ final class PretixDateWidget extends WidgetBase {
    *   The complete form structure.
    */
   public function validate(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    $time_from = $element['time_from_value']['#value']['object'];
-    $time_to = $element['time_to_value']['#value']['object'];
+    $time_from = $element['time_from_value']['#value']['object'] ?? NULL;
+    $time_to = $element['time_to_value']['#value']['object'] ?? NULL;
 
     if ($time_from instanceof DrupalDateTime && $time_to instanceof DrupalDateTime && $time_to < $time_from) {
       $form_state->setError($element['time_to_value'], $this->t('The end time cannot be before the start time'));
+    }
+
+    $registration_deadline = $element['registration_deadline_value']['#value']['object'] ?? NULL;
+    if ($registration_deadline instanceof DrupalDateTime && $time_from instanceof DrupalDateTime && $time_from < $registration_deadline) {
+      $form_state->setError($element['registration_deadline_value'], $this->t('The registration deadline must be before the start time'));
     }
   }
 

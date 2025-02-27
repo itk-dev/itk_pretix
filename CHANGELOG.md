@@ -9,6 +9,9 @@ before starting to add changes.
 
 ## [Unreleased]
 
+* [PR-69](https://github.com/itk-dev/itk_pretix/pull/69)
+  Added “Registration deadline” to date
+
 ## 1.2.2
 
 - Allow nullabale pretix client

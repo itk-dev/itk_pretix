@@ -83,6 +83,7 @@ final class PretixDateFormatter extends FormatterBase {
           'entity' => $items->getEntity(),
           'location' => $item->location,
           'address' => $item->address,
+          'registration_deadline' => $item->registration_deadline,
           'time_from' => $item->time_from,
           'time_to' => $item->time_to,
           'spots' => $item->spots,

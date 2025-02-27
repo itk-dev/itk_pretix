@@ -226,7 +226,7 @@ class NodeHelper {
 
     if (NULL !== $items) {
       foreach ($items as $item) {
-        foreach (['time_from', 'time_to'] as $key) {
+        foreach (['registration_deadline', 'time_from', 'time_to'] as $key) {
           if (isset($item->{$key}) && is_string($item->{$key})) {
             $item->{$key} = new DrupalDateTime($item->{$key});
           }

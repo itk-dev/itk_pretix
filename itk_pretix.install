@@ -5,6 +5,8 @@
  * Installation file for the itk_pretix module.
  */
 
+use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+
 /**
  * Implements hook_schema().
  */
@@ -92,4 +94,74 @@ function itk_pretix_schema() {
       ],
     ],
   ];
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function itk_pretix_update_10101(&$sandbox) {
+  _itk_pretix_field_type_add_properties(
+    'pretix_date',
+    [
+      'registration_deadline_value' => [
+        'description' => 'The registration deadline value.',
+        'type' => 'varchar',
+        'length' => 20,
+      ],
+    ]
+  );
+}
+
+/**
+ * Lifted from https://drupal.stackexchange.com/a/295485.
+ */
+function _itk_pretix_field_type_add_properties(string $field_type, array $columns): void {
+  $database_schema = \Drupal::database()->schema();
+
+  $entity_definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+
+  // First, get all fields of the provided field type.
+  $field_map = \Drupal::service('entity_field.manager')
+    ->getFieldMapByFieldType($field_type);
+
+  // Process per entity type (i.e., node, paragraph) all fields.
+  foreach ($field_map as $entity_type_id => $fields) {
+    $entity_type_storage = \Drupal::entityTypeManager()
+      ->getStorage($entity_type_id);
+
+    // Database schema can only be updated, if the values are stored in the
+    // database, of course.
+    if ($entity_type_storage instanceof SqlContentEntityStorage) {
+      foreach (array_keys($fields) as $field_name) {
+        $field_storage_definition = $entity_definition_update_manager->getFieldStorageDefinition($field_name,
+          $entity_type_id);
+
+        // Get the table and column names, according to the field definition.
+        $table_mapping = $entity_type_storage->getTableMapping([
+          $field_name => $field_storage_definition,
+        ]);
+        $table_names = $table_mapping->getDedicatedTableNames();
+        $table_columns = $table_mapping->getColumnNames($field_name);
+
+        // Check if, for the property, the corresponding table exists in the
+        // database. If not, create the table column (according to the schema
+        // provided by the field definition).
+        foreach ($table_names as $table_name) {
+          $table_exists = $database_schema->tableExists($table_name);
+          foreach ($columns as $property => $spec) {
+            $field_exists = $database_schema->fieldExists($table_name,
+              $table_columns[$property]);
+
+            if ($table_exists && !$field_exists) {
+              $database_schema->addField($table_name, $table_columns[$property],
+                $spec);
+            }
+          }
+        }
+
+        // Reflect any changes made to the field storage definition.
+        $entity_definition_update_manager->updateFieldStorageDefinition($field_storage_definition);
+      }
+    }
+  }
 }

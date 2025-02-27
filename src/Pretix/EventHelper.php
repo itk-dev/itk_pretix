@@ -290,7 +290,7 @@ class EventHelper extends AbstractHelper {
       'active' => TRUE,
       'is_public' => TRUE,
       'date_admission' => NULL,
-      'presale_end' => NULL,
+      'presale_end' => $this->formatDate($item->registration_deadline),
       'seating_plan' => NULL,
       'seat_category_mapping' => (object) [],
     ]);
