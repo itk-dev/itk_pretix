@@ -2,6 +2,7 @@
 
 namespace Drupal\itk_pretix\Exporter;
 
+use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystem;
 use Drupal\Core\File\FileUrlGenerator;
 use Drupal\Core\Session\AccountInterface;
@@ -81,8 +82,8 @@ class Manager implements ManagerInterface {
       $directory = dirname($url);
       $this->fileSystem->prepareDirectory($directory, FileSystem::CREATE_DIRECTORY);
       $filePath = $this->fileSystem->realpath($url);
-      $this->fileSystem->saveData((string) $response->getBody(), $filePath, FileSystem::EXISTS_REPLACE);
-      $this->fileSystem->saveData(json_encode($response->getHeaders()), $filePath . '.headers', FileSystem::EXISTS_REPLACE);
+      $this->fileSystem->saveData((string) $response->getBody(), $filePath, FileExists::Replace);
+      $this->fileSystem->saveData(json_encode($response->getHeaders()), $filePath . '.headers', FileExists::Replace);
 
       return $this->fileUrlGenerator->generateAbsoluteString($url);
     }
