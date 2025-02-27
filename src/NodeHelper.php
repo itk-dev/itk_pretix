@@ -117,7 +117,7 @@ class NodeHelper {
         $event = $client->getEvent($slug);
         $events[] = $event;
       }
-      catch (\Exception $exception) {
+      catch (\Exception) {
       }
     }
 

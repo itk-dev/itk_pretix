@@ -42,6 +42,7 @@ class PretixEventExportersController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
     $instance->eventHelper = $container->get('itk_pretix.event_helper');
@@ -71,12 +72,10 @@ class PretixEventExportersController extends ControllerBase {
     $enabled = $config->get('event_exporters_enabled');
     $exporters = $this->exporterManager->getEventExporters($enabled);
 
-    $exporterForms = array_map(function (AbstractExporter $exporter) use ($node) {
-        return [
-          'name' => $exporter->getName(),
-          'form' => $this->buildForm($node, $exporter),
-        ];
-    }, $exporters);
+    $exporterForms = array_map(fn(AbstractExporter $exporter) => [
+      'name' => $exporter->getName(),
+      'form' => $this->buildForm($node, $exporter),
+    ], $exporters);
 
     return [
       '#theme' => 'itk_pretix_event_exporters',

@@ -25,6 +25,7 @@ class PretixEventSettings extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function propertyDefinitions(
     FieldStorageDefinitionInterface $field_definition,
   ) {
@@ -41,6 +42,7 @@ class PretixEventSettings extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function schema(
     FieldStorageDefinitionInterface $field_definition,
   ) {
@@ -61,6 +63,7 @@ class PretixEventSettings extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function isEmpty() {
     return FALSE;
   }

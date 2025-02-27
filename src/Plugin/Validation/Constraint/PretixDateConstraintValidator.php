@@ -14,6 +14,7 @@ class PretixDateConstraintValidator extends ConstraintValidator {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function validate($item, Constraint $constraint) {
     if (!$item instanceof PretixDate || !$constraint instanceof PretixDateConstraint) {
       return;

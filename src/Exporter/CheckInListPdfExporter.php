@@ -21,6 +21,7 @@ class CheckInListPdfExporter extends CheckInListExporter {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
     unset($form['_format']);
@@ -31,6 +32,7 @@ class CheckInListPdfExporter extends CheckInListExporter {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function processInputParameters(array $parameters) {
     $parameters = parent::processInputParameters($parameters);
     // Make sure that questions is set.

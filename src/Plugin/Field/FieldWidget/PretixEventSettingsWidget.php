@@ -25,31 +25,24 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class PretixEventSettingsWidget extends WidgetBase {
 
   /**
-   * The event helper.
-   *
-   * @var \Drupal\itk_pretix\Pretix\EventHelper
-   */
-  private EventHelper $eventHelper;
-
-  /**
-   * Thee node helper.
-   *
-   * @var \Drupal\itk_pretix\NodeHelper
-   */
-  private NodeHelper $nodeHelper;
-
-  /**
    * Date widget constructor.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EventHelper $eventHelper, NodeHelper $nodeHelper) {
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    array $third_party_settings,
+    private readonly EventHelper $eventHelper,
+    private readonly NodeHelper $nodeHelper,
+  ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-    $this->eventHelper = $eventHelper;
-    $this->nodeHelper = $nodeHelper;
   }
 
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $plugin_id,
@@ -65,6 +58,7 @@ final class PretixEventSettingsWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function formElement(
     FieldItemListInterface $items,
     $delta,

@@ -29,23 +29,23 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
 final class PretixDateWidget extends WidgetBase {
 
   /**
-   * The event helper.
-   *
-   * @var \Drupal\itk_pretix\Pretix\EventHelper
-   */
-  private EventHelper $eventHelper;
-
-  /**
    * Date widget constructor.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EventHelper $eventHelper) {
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    array $third_party_settings,
+    private readonly EventHelper $eventHelper,
+  ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-    $this->eventHelper = $eventHelper;
   }
 
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $plugin_id,
@@ -60,12 +60,13 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $eventHelper = $this->eventHelper;
     /** @var \Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate $item */
     $item = $items[$delta];
 
-    $element['#element_validate'][] = [$this, 'validate'];
+    $element['#element_validate'][] = $this->validate(...);
     $element['#attributes']['class'][] = 'pretix-date-widget';
     if ($this->hideEndDate()) {
       $element['#attributes']['class'][] = 'hide-end-date';
@@ -231,6 +232,7 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     // The widget form element type has transformed the value to a
     // DrupalDateTime object at this point. We need to convert it back to the
@@ -271,6 +273,7 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function defaultSettings() {
     return [
       'hide_end_date' => FALSE,
@@ -282,6 +285,7 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $element['hide_end_date'] = [
       '#title' => $this->t('Hide end date'),
@@ -310,6 +314,7 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function settingsSummary() {
     if ($this->hideEndDate()) {
       $summary[] = $this->t('Hide end date');
@@ -339,6 +344,7 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function errorElement(
     array $element,
     ConstraintViolationInterface $error,

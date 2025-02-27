@@ -21,6 +21,7 @@ class OrderListExporter extends AbstractExporter {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function buildForm(array $form, FormStateInterface $form_state) {
     $formats = [
       'xlsx' => 'xlsx',

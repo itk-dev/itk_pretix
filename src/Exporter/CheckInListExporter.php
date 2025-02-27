@@ -21,6 +21,7 @@ class CheckInListExporter extends AbstractExporter {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function buildForm(array $form, FormStateInterface $form_state) {
     $formats = [
       'xlsx' => $this->t('Excel (.xlsx)'),
@@ -48,6 +49,7 @@ class CheckInListExporter extends AbstractExporter {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function processInputParameters(array $parameters) {
     $parameters = parent::processInputParameters($parameters);
     // Make sure that questions is set.

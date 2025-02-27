@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -o errexit -o errtrace -o noclobber -o nounset -o pipefail
+IFS=$'\n\t'
+
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+cd "$script_dir"
+
+execute() {
+  composer require --dev palantirnet/drupal-rector
+  shell vendor/bin/rector --config="$module_path/rector.php"
+}
+
+source "$script_dir/base"

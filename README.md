@@ -68,30 +68,21 @@ docker compose run --rm node yarn encore production
 
 The code must follw the [Drupal Coding Standards](https://www.drupal.org/docs/develop/standards)
 
-Check the coding standards by running
+Apply and check the coding standards by running
 
 ```sh
 docker compose run --rm phpfpm composer install
-docker compose run --rm phpfpm composer coding-standards-check
-```
-
-Apply the coding standards by running
-
-```sh
 docker compose run --rm phpfpm composer normalize
 docker compose run --rm phpfpm composer coding-standards-apply
+docker compose run --rm phpfpm composer coding-standards-check
 ```
 
 ### Assets
 
-Check the coding standards in assets by running
+Apply and check the coding standards in assets by running
 
 ```sh
-docker compose run --rm node yarn coding-standards-check
-```
-
-Apply the coding standards by running
-
-```sh
+docker compose run --rm node yarn install
 docker compose run --rm node yarn coding-standards-apply
+docker compose run --rm node yarn coding-standards-check
 ```

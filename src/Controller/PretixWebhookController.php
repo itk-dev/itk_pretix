@@ -50,6 +50,7 @@ class PretixWebhookController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
     $instance->orderHelper = $container->get('itk_pretix.order_helper');
@@ -80,12 +81,10 @@ class PretixWebhookController extends ControllerBase {
     }
 
     $action = $payload['action'] ?? NULL;
-    switch ($action) {
-      case OrderHelper::PRETIX_EVENT_ORDER_PAID:
-      case OrderHelper::PRETIX_EVENT_ORDER_CANCELED:
-        $this->handleOrderUpdated($payload, $action);
-        break;
-    }
+    match ($action) {
+      OrderHelper::PRETIX_EVENT_ORDER_PAID, OrderHelper::PRETIX_EVENT_ORDER_CANCELED => $this->handleOrderUpdated($payload, $action),
+        default => new JsonResponse($payload),
+    };
 
     return new JsonResponse($payload);
   }
