@@ -4,7 +4,8 @@ namespace Drupal\itk_pretix\Exporter;
 
 use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystem;
-use Drupal\Core\File\FileUrlGenerator;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\itk_pretix\Access\AccessCheck;
@@ -38,10 +39,10 @@ class Manager implements ManagerInterface {
    * Constructor.
    */
   public function __construct(
-    private readonly FileSystem $fileSystem,
+    private readonly FileSystemInterface $fileSystem,
     private readonly AccessCheck $accessCheck,
     private readonly AccountInterface $currentUser,
-    private readonly FileUrlGenerator $fileUrlGenerator,
+    private readonly FileUrlGeneratorInterface $fileUrlGenerator,
   ) {}
 
   /**

@@ -2,6 +2,7 @@
 
 namespace Drupal\itk_pretix\Plugin\Field\FieldWidget;
 
+use Drupal\Core\Database\Exception\EventException;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
@@ -50,8 +51,8 @@ final class PretixEventSettingsWidget extends WidgetBase {
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('itk_pretix.event_helper'),
-      $container->get('itk_pretix.node_helper')
+      $container->get(EventHelper::class),
+      $container->get(NodeHelper::class)
     );
   }
 

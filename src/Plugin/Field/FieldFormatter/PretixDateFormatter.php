@@ -51,7 +51,7 @@ final class PretixDateFormatter extends FormatterBase {
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('itk_pretix.event_helper')
+      $container->get(EventHelper::class)
     );
   }
 

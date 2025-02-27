@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\itk_pretix\Exporter\ManagerInterface as ExporterManagerInterface;
 use Drupal\itk_pretix\Pretix\EventHelper;
 use Drupal\itk_pretix\Pretix\OrderHelper;
+use Drupal\itk_pretix\Exporter\Manager as ExporterManager;
 use ItkDev\Pretix\Api\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -35,9 +36,9 @@ final class PretixConfigForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
           $container->get('config.factory'),
-          $container->get('itk_pretix.event_helper'),
-          $container->get('itk_pretix.order_helper'),
-          $container->get('itk_pretix.exporter_manager')
+          $container->get(EventHelper::class),
+          $container->get(OrderHelper::class),
+          $container->get(ExporterManager::class)
       );
   }
 

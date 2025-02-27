@@ -53,7 +53,7 @@ final class PretixDateWidget extends WidgetBase {
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('itk_pretix.event_helper')
+      $container->get(EventHelper::class)
     );
   }
 

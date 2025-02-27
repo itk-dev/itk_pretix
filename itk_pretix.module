@@ -6,6 +6,9 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\itk_pretix\Exporter\Manager as ExporterManager;
+use Drupal\itk_pretix\Exporter\ManagerInterface as ExporterManagerInterface;
+use Drupal\itk_pretix\NodeHelper;
 use Drupal\node\NodeInterface;
 
 /**
@@ -92,33 +95,47 @@ function _itk_pretix_process_datetime_element(array $element) {
  * Implements hook_node_insert().
  */
 function itk_pretix_node_insert(NodeInterface $node) {
-  \Drupal::service('itk_pretix.node_helper')->synchronizeEvent($node, 'insert');
+  _itk_pretix_get_node_helper()->synchronizeEvent($node, 'insert');
 }
 
 /**
  * Implements hook_node_update().
  */
 function itk_pretix_node_update(NodeInterface $node) {
-  \Drupal::service('itk_pretix.node_helper')->synchronizeEvent($node, 'update');
+  _itk_pretix_get_node_helper()->synchronizeEvent($node, 'update');
 }
 
 /**
  * Implements hook_node_delete().
  */
 function itk_pretix_node_delete(NodeInterface $node) {
-  \Drupal::service('itk_pretix.node_helper')->synchronizeEvent($node, 'delete');
+  _itk_pretix_get_node_helper()->synchronizeEvent($node, 'delete');
 }
 
 /**
  * Implements hook_cloned_node_alter().
  */
 function itk_pretix_cloned_node_alter(NodeInterface $node) {
-  \Drupal::service('itk_pretix.node_helper')->clonedNodeAlter($node);
+  _itk_pretix_get_node_helper()->clonedNodeAlter($node);
 }
 
 /**
  * Implements hook_file_download().
  */
 function itk_pretix_file_download($uri) {
-  return \Drupal::service('itk_pretix.exporter_manager')->fileDownload($uri);
+  return _itk_pretix_get_exporter_manager()->fileDownload($uri);
+}
+
+/**
+ * Get node helper.
+ */
+function _itk_pretix_get_node_helper(): NodeHelper {
+  return \Drupal::service(NodeHelper::class);
+}
+
+/**
+ * Get exporter manager.
+ */
+function _itk_pretix_get_exporter_manager(): ExporterManagerInterface {
+  return \Drupal::service(ExporterManager::class);
 }

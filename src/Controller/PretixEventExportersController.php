@@ -7,12 +7,14 @@ use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\itk_pretix\Exception\ExporterException;
 use Drupal\itk_pretix\Exporter\AbstractExporter;
+use Drupal\itk_pretix\Pretix\EventHelper;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Drupal\itk_pretix\Exporter\Manager as ExporterManager;
 
 /**
  * Pretix controller.
@@ -45,8 +47,8 @@ class PretixEventExportersController extends ControllerBase {
   #[\Override]
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
-    $instance->eventHelper = $container->get('itk_pretix.event_helper');
-    $instance->exporterManager = $container->get('itk_pretix.exporter_manager');
+    $instance->eventHelper = $container->get(EventHelper::class);
+    $instance->exporterManager = $container->get(ExporterManager::class);
     $instance->setMessenger($container->get('messenger'));
     $instance->session = $container->get('session');
 

@@ -53,9 +53,9 @@ class PretixWebhookController extends ControllerBase {
   #[\Override]
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
-    $instance->orderHelper = $container->get('itk_pretix.order_helper');
-    $instance->nodeHelper = $container->get('itk_pretix.node_helper');
-    $instance->eventHelper = $container->get('itk_pretix.event_helper');
+    $instance->orderHelper = $container->get(OrderHelper::class);
+    $instance->nodeHelper = $container->get(NodeHelper::class);
+    $instance->eventHelper = $container->get(EventHelper::class);
     $instance->database = $container->get('database');
 
     return $instance;
