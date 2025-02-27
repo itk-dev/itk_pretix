@@ -36,12 +36,6 @@
         }
     },
     "scripts": {
-        "code-analysis": [
-            "@code-analysis/phpstan"
-        ],
-        "code-analysis/phpstan": [
-            "phpstan analyse --configuration=phpstan.neon"
-        ],
         "coding-standards-apply": [
             "@coding-standards-apply/phpcs"
         ],

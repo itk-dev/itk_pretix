@@ -9,6 +9,8 @@ before starting to add changes.
 
 ## [Unreleased]
 
+* [PR-70](https://github.com/itk-dev/itk_pretix/pull/70)
+  Cleaned up and refactored Code
 * [PR-69](https://github.com/itk-dev/itk_pretix/pull/69)
   Added “Registration deadline” to date
 
