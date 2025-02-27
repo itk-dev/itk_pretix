@@ -340,11 +340,11 @@ final class PretixDateWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function errorElement(
-        array $element,
-        ConstraintViolationInterface $error,
-        array $form,
-        FormStateInterface $form_state
-    ) {
+    array $element,
+    ConstraintViolationInterface $error,
+    array $form,
+    FormStateInterface $form_state,
+  ) {
     $propertyPath = preg_replace('/^\d+\./', '', $error->getPropertyPath());
     return $element[$propertyPath] ?? $element;
   }

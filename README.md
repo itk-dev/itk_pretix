@@ -49,19 +49,19 @@ The available exporters for a node can be run from
 First, install tools and requirements:
 
 ```sh
-yarn install
+docker compose run --rm node yarn install
 ```
 
 Build for development:
 
 ```sh
-yarn encore dev --watch
+docker compose run --rm node yarn encore dev --watch
 ```
 
 Build for production:
 
 ```sh
-yarn encore production
+docker compose run --rm node yarn encore production
 ```
 
 ## Coding standards
@@ -71,14 +71,15 @@ The code must follw the [Drupal Coding Standards](https://www.drupal.org/docs/de
 Check the coding standards by running
 
 ```sh
-composer install
-composer coding-standards-check
+docker compose run --rm phpfpm composer install
+docker compose run --rm phpfpm composer coding-standards-check
 ```
 
 Apply the coding standards by running
 
 ```sh
-composer coding-standards-apply
+docker compose run --rm phpfpm composer normalize
+docker compose run --rm phpfpm composer coding-standards-apply
 ```
 
 ### Assets
@@ -86,11 +87,11 @@ composer coding-standards-apply
 Check the coding standards in assets by running
 
 ```sh
-yarn coding-standards-check
+docker compose run --rm node yarn coding-standards-check
 ```
 
 Apply the coding standards by running
 
 ```sh
-yarn coding-standards-apply
+docker compose run --rm node yarn coding-standards-apply
 ```

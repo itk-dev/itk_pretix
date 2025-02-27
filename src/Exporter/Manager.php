@@ -41,7 +41,7 @@ class Manager implements ManagerInterface {
     private readonly FileSystem $fileSystem,
     private readonly AccessCheck $accessCheck,
     private readonly AccountInterface $currentUser,
-    private readonly FileUrlGenerator $fileUrlGenerator
+    private readonly FileUrlGenerator $fileUrlGenerator,
   ) {}
 
   /**
@@ -57,7 +57,7 @@ class Manager implements ManagerInterface {
   /**
    * Get event exporters.
    */
-  public function getEventExporters(array $ids = NULL) {
+  public function getEventExporters(?array $ids = NULL) {
     return array_filter($this->eventExporters, static function (ExporterInterface $exporter) use ($ids) {
         return NULL === $ids || in_array($exporter->getId(), $ids, TRUE);
     });

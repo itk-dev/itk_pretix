@@ -57,7 +57,7 @@ class EventHelper extends AbstractHelper {
     ConfigFactoryInterface $configFactory,
     LoggerChannelFactoryInterface $loggerFactory,
     OrderHelper $orderHelper,
-    ModuleHandlerInterface $moduleHandler
+    ModuleHandlerInterface $moduleHandler,
   ) {
     parent::__construct($database, $configFactory, $loggerFactory);
     $this->orderHelper = $orderHelper;

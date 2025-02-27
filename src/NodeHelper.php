@@ -40,7 +40,7 @@ class NodeHelper {
     private readonly EventHelper $eventHelper,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ModuleHandlerInterface $moduleHandler,
-    MessengerInterface $messenger
+    MessengerInterface $messenger,
   ) {
     $this->setMessenger($messenger);
   }

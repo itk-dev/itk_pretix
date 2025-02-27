@@ -66,12 +66,12 @@ final class PretixEventSettingsWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(
-        FieldItemListInterface $items,
-        $delta,
-        array $element,
-        array &$form,
-        FormStateInterface $form_state
-    ) {
+    FieldItemListInterface $items,
+    $delta,
+    array $element,
+    array &$form,
+    FormStateInterface $form_state,
+  ) {
     /** @var \Drupal\node\Entity\Node $node */
     $node = $items->getParent()->getEntity();
     $helper = $this->nodeHelper;
