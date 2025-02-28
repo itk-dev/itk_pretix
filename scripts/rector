@@ -6,8 +6,8 @@ script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$script_dir"
 
 execute() {
-  composer require --dev symfony/phpunit-bridge
-  shell vendor/bin/phpstan --configuration="$module_path/phpstan.neon" --memory-limit=256M
+  composer require --dev palantirnet/drupal-rector
+  shell vendor/bin/rector --config="$module_path/rector.php"
 }
 
 source "$script_dir/base"

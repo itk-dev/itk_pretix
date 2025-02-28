@@ -44,6 +44,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function getId() {
     if (NULL === static::$id) {
       throw new \RuntimeException(sprintf('Property id not defined in class %s', static::class));
@@ -54,6 +55,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function getName() {
     if (NULL === static::$name) {
       throw new \RuntimeException(sprintf('Property name not defined in class %s', static::class));
@@ -64,6 +66,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function getFormId() {
     return 'itk_pretix_exporter_' . $this->getId();
   }
@@ -71,6 +74,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function submitForm(array &$form, FormStateInterface $form_state) {
     throw new \RuntimeException();
   }
@@ -78,6 +82,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
   /**
    * Process input parameters.
    */
+  #[\Override]
   public function processInputParameters(array $parameters) {
     unset($parameters['op'], $parameters['form_build_id'], $parameters['form_token'], $parameters['form_id']);
 
@@ -87,6 +92,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
   /**
    * Get pretix client.
    */
+  #[\Override]
   public function setPretixClient(Client $client) {
     $this->client = $client;
 
@@ -96,6 +102,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
   /**
    * Set event info.
    */
+  #[\Override]
   public function setEventInfo(array $eventInfo) {
     $this->eventInfo = $eventInfo;
 
@@ -164,9 +171,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
 
     if (!isset(self::$checkInLists[$event])) {
       $defaultName = 'exporter check-in list (do not delete)';
-      $isDefaultList = static function (CheckInList $list) use ($defaultName) {
-        return $defaultName === $list->getName();
-      };
+      $isDefaultList = static fn(CheckInList $list) => $defaultName === $list->getName();
       $checkInLists = $this->client->getCheckInLists($event);
       $defaultList = $checkInLists->filter($isDefaultList)->first();
       if (!$defaultList) {
@@ -179,9 +184,7 @@ abstract class AbstractExporter extends FormBase implements ExporterInterface {
         $checkInLists->add($defaultList);
       }
 
-      [$head, $tail] = $checkInLists->partition(static function ($key, $list) use ($isDefaultList) {
-          return $isDefaultList($list);
-      });
+      [$head, $tail] = $checkInLists->partition(static fn($key, $list) => $isDefaultList($list));
 
       // Make sure that the default list is first in collection.
       self::$checkInLists[$event] = new ArrayCollection(

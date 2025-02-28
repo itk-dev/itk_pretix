@@ -29,23 +29,23 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
 final class PretixDateWidget extends WidgetBase {
 
   /**
-   * The event helper.
-   *
-   * @var \Drupal\itk_pretix\Pretix\EventHelper
-   */
-  private EventHelper $eventHelper;
-
-  /**
    * Date widget constructor.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EventHelper $eventHelper) {
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    array $third_party_settings,
+    private readonly EventHelper $eventHelper,
+  ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-    $this->eventHelper = $eventHelper;
   }
 
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $plugin_id,
@@ -53,19 +53,20 @@ final class PretixDateWidget extends WidgetBase {
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('itk_pretix.event_helper')
+      $container->get(EventHelper::class)
     );
   }
 
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $eventHelper = $this->eventHelper;
     /** @var \Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate $item */
     $item = $items[$delta];
 
-    $element['#element_validate'][] = [$this, 'validate'];
+    $element['#element_validate'][] = $this->validate(...);
     $element['#attributes']['class'][] = 'pretix-date-widget';
     if ($this->hideEndDate()) {
       $element['#attributes']['class'][] = 'hide-end-date';
@@ -97,6 +98,21 @@ final class PretixDateWidget extends WidgetBase {
       '#attributes' => ['class' => ['js-dawa-element']],
       '#required' => $element['#required'],
     ];
+
+    $element['registration_deadline_value'] = [
+      '#title' => t('Registration deadline'),
+      '#type' => 'datetime',
+      '#default_value' => NULL,
+      '#date_increment' => 1,
+      '#date_timezone' => date_default_timezone_get(),
+      '#required' => $element['#required'],
+    ];
+
+    if ($items[$delta]->registration_deadline) {
+      /** @var \Drupal\Core\Datetime\DrupalDateTime $registration_deadline */
+      $registration_deadline = $items[$delta]->registration_deadline;
+      $element['registration_deadline_value']['#default_value'] = $this->createDefaultValue($registration_deadline, $element['registration_deadline_value']['#date_timezone']);
+    }
 
     $element['time_from_value'] = [
       '#title' => t('Start time'),
@@ -216,6 +232,7 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
     // The widget form element type has transformed the value to a
     // DrupalDateTime object at this point. We need to convert it back to the
@@ -225,6 +242,14 @@ final class PretixDateWidget extends WidgetBase {
     $user_timezone = new \DateTimeZone(date_default_timezone_get());
 
     foreach ($values as &$item) {
+      if (!empty($item['registration_deadline_value']) && $item['registration_deadline_value'] instanceof DrupalDateTime) {
+        /** @var \Drupal\Core\Datetime\DrupalDateTime $time_from */
+        $registration_deadline = $item['registration_deadline_value'];
+
+        // Adjust the date for storage.
+        $item['registration_deadline_value'] = $registration_deadline->setTimezone($storage_timezone)->format($storage_format);
+      }
+
       if (!empty($item['time_from_value']) && $item['time_from_value'] instanceof DrupalDateTime) {
         /** @var \Drupal\Core\Datetime\DrupalDateTime $time_from */
         $time_from = $item['time_from_value'];
@@ -248,6 +273,7 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function defaultSettings() {
     return [
       'hide_end_date' => FALSE,
@@ -259,6 +285,7 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $element['hide_end_date'] = [
       '#title' => $this->t('Hide end date'),
@@ -287,6 +314,7 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function settingsSummary() {
     if ($this->hideEndDate()) {
       $summary[] = $this->t('Hide end date');
@@ -316,12 +344,13 @@ final class PretixDateWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function errorElement(
-        array $element,
-        ConstraintViolationInterface $error,
-        array $form,
-        FormStateInterface $form_state
-    ) {
+    array $element,
+    ConstraintViolationInterface $error,
+    array $form,
+    FormStateInterface $form_state,
+  ) {
     $propertyPath = preg_replace('/^\d+\./', '', $error->getPropertyPath());
     return $element[$propertyPath] ?? $element;
   }
@@ -341,11 +370,16 @@ final class PretixDateWidget extends WidgetBase {
    *   The complete form structure.
    */
   public function validate(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    $time_from = $element['time_from_value']['#value']['object'];
-    $time_to = $element['time_to_value']['#value']['object'];
+    $time_from = $element['time_from_value']['#value']['object'] ?? NULL;
+    $time_to = $element['time_to_value']['#value']['object'] ?? NULL;
 
     if ($time_from instanceof DrupalDateTime && $time_to instanceof DrupalDateTime && $time_to < $time_from) {
       $form_state->setError($element['time_to_value'], $this->t('The end time cannot be before the start time'));
+    }
+
+    $registration_deadline = $element['registration_deadline_value']['#value']['object'] ?? NULL;
+    if ($registration_deadline instanceof DrupalDateTime && $time_from instanceof DrupalDateTime && $time_from < $registration_deadline) {
+      $form_state->setError($element['registration_deadline_value'], $this->t('The registration deadline must be before the start time'));
     }
   }
 
