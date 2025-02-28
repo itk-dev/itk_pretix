@@ -1,7 +1,7 @@
 # ITK Pretix
 
 This Drupal 8 module creates a new field type that enables a link to
-https://pretix.eu/ to be made.
+<https://pretix.eu/> to be made.
 
 Through the Pretix API it is possible to add, change or remove Pretix
 event date entries from the Drupal interface.
@@ -85,4 +85,11 @@ Apply and check the coding standards in assets by running
 docker compose run --rm node yarn install
 docker compose run --rm node yarn coding-standards-apply
 docker compose run --rm node yarn coding-standards-check
+```
+
+### Markdown
+
+``` sh
+docker compose run --rm markdownlint markdownlint '**/*.md' --fix
+docker compose run --rm markdownlint markdownlint '**/*.md'
 ```
