@@ -35,6 +35,7 @@ class PretixDate extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties['uuid'] = DataDefinition::create('string')
       ->setLabel(t('UUID'))
@@ -87,6 +88,7 @@ class PretixDate extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = [
       'columns' => [
@@ -140,6 +142,7 @@ class PretixDate extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function isEmpty() {
     $location = $this->get('location')->getValue();
     $timeFrom = $this->get('time_from_value')->getValue();
@@ -150,6 +153,7 @@ class PretixDate extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function preSave() {
     if (empty($this->get('uuid')->getValue())) {
       $this->get('uuid')->setValue(\Drupal::service('uuid')->generate());
@@ -163,7 +167,7 @@ class PretixDate extends FieldItemBase {
           $this->addData(['coordinates' => $results[0]->adgangspunkt->koordinater]);
         }
       }
-      catch (\Exception $exception) {
+      catch (\Exception) {
       }
     }
   }

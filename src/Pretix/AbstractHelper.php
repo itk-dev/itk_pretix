@@ -43,7 +43,7 @@ abstract class AbstractHelper {
   public function __construct(
     private readonly Connection $database,
     private readonly ConfigFactoryInterface $configFactory,
-    private readonly LoggerChannelFactoryInterface $loggerFactory
+    private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {
   }
 
@@ -94,7 +94,7 @@ abstract class AbstractHelper {
    * @return array
    *   The configuration.
    */
-  public function getPretixConfiguration(NodeInterface $node = NULL): array {
+  public function getPretixConfiguration(?NodeInterface $node = NULL): array {
     $config = $this->configFactory->get('itk_pretix.pretixconfig');
 
     // @todo Handle node, e.g. to get user specific configuration.
@@ -379,7 +379,7 @@ abstract class AbstractHelper {
   /**
    * Handle a pretix api client exception.
    */
-  protected function clientException(string $message, \Exception $clientException = NULL): SynchronizeException {
+  protected function clientException(string $message, ?\Exception $clientException = NULL): SynchronizeException {
     // @todo Log the exception.
     if (NULL === $clientException) {
       $this->loggerFactory->get('itk_pretix')->error($message);

@@ -154,7 +154,7 @@ class OrderHelper extends AbstractHelper {
    *
    * @throws \Exception
    */
-  public function getOrderLines($order) {
+  public function getOrderLines($order): never {
     throw new \RuntimeException(__METHOD__ . ' not implemented');
   }
 
@@ -164,7 +164,7 @@ class OrderHelper extends AbstractHelper {
    * @param \Drupal\node\NodeInterface $node
    *   The node.
    */
-  public function getAvailability(NodeInterface $node) {
+  public function getAvailability(NodeInterface $node): never {
     throw new \RuntimeException(__METHOD__ . ' not implemented');
   }
 

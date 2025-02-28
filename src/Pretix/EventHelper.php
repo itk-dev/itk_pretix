@@ -25,20 +25,6 @@ class EventHelper extends AbstractHelper {
   public const DATETIME_FORMAT = \DateTime::ATOM;
 
   /**
-   * The order helper.
-   *
-   * @var \Drupal\itk_pretix\Pretix\OrderHelper
-   */
-  private OrderHelper $orderHelper;
-
-  /**
-   * The module handler interface.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  private ModuleHandlerInterface $moduleHandler;
-
-  /**
    * Constructor.
    *
    * @param \Drupal\Core\Database\Connection $database
@@ -56,12 +42,10 @@ class EventHelper extends AbstractHelper {
     Connection $database,
     ConfigFactoryInterface $configFactory,
     LoggerChannelFactoryInterface $loggerFactory,
-    OrderHelper $orderHelper,
-    ModuleHandlerInterface $moduleHandler
+    private readonly OrderHelper $orderHelper,
+    private readonly ModuleHandlerInterface $moduleHandler,
   ) {
     parent::__construct($database, $configFactory, $loggerFactory);
-    $this->orderHelper = $orderHelper;
-    $this->moduleHandler = $moduleHandler;
   }
 
   /**
@@ -203,7 +187,7 @@ class EventHelper extends AbstractHelper {
         $pretixSubEventIds[] = $subEvent->getId();
       }
     }
-    catch (\Exception $exception) {
+    catch (\Exception) {
       // @todo Do something clever here.
     }
 
@@ -237,7 +221,7 @@ class EventHelper extends AbstractHelper {
       $templateSubEvents = $client->getSubEvents($templateEvent);
     }
     catch (\Exception $exception) {
-      throw $this->clientException($this->t('Cannot get template event sub-events'), $exception->getCode(), $exception);
+      throw $this->clientException($this->t('Cannot get template event sub-events'), $exception->getCode());
     }
     if (0 === $templateSubEvents->count()) {
       throw $this->clientException($this->t('Cannot get template event sub-events'));
@@ -388,9 +372,7 @@ class EventHelper extends AbstractHelper {
       $availabilities = $this->orderHelper
         ->setPretixClient($client)
         ->getSubEventAvailabilities($subEvent);
-      $subEventData['availability'] = $availabilities->map(static function (Quota $quota) {
-          return $quota->toArray();
-      })->toArray();
+      $subEventData['availability'] = $availabilities->map(static fn(Quota $quota) => $quota->toArray())->toArray();
     }
     catch (\Exception $exception) {
       $exception->getCode();
@@ -523,7 +505,7 @@ class EventHelper extends AbstractHelper {
     try {
       $subEvents = $client->getSubEvents($event);
     }
-    catch (\Exception $exception) {
+    catch (\Exception) {
       return [
         'event_slug' => t('Cannot get sub-events.'),
       ];
@@ -539,7 +521,7 @@ class EventHelper extends AbstractHelper {
     try {
       $quotas = $client->getQuotas($event, ['subevent' => $subEvent->getId()]);
     }
-    catch (\Exception $exception) {
+    catch (\Exception) {
       return [
         'event_slug' => t('Cannot get sub-event quotas.'),
       ];
@@ -601,7 +583,7 @@ class EventHelper extends AbstractHelper {
       throw new ExporterException($response->getReasonPhrase());
     }
 
-    return json_decode($response->getBody(), TRUE);
+    return json_decode((string) $response->getBody(), TRUE);
   }
 
   /**
@@ -668,7 +650,7 @@ class EventHelper extends AbstractHelper {
     $template = $configuration['pretix_event_slug_template'] ?? '!nid';
 
     // Make sure that node id is used in template.
-    if (FALSE === strpos($template, '!nid')) {
+    if (!str_contains((string) $template, '!nid')) {
       $template .= '-!nid';
     }
 
@@ -715,7 +697,7 @@ class EventHelper extends AbstractHelper {
    *
    * @throws \Exception
    */
-  private function getDate($value) {
+  private function getDate(mixed $value) {
     if (NULL === $value) {
       return NULL;
     }

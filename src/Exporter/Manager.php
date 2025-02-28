@@ -2,8 +2,10 @@
 
 namespace Drupal\itk_pretix\Exporter;
 
+use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystem;
-use Drupal\Core\File\FileUrlGenerator;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\itk_pretix\Access\AccessCheck;
@@ -15,7 +17,7 @@ use GuzzleHttp\Psr7\Response;
  * Exporter manager.
  */
 class Manager implements ManagerInterface {
-  private const EXPORTER_RESULT_BASE_URL = 'private://itk_pretix/exporters';
+  private const string EXPORTER_RESULT_BASE_URL = 'private://itk_pretix/exporters';
 
   use StringTranslationTrait;
 
@@ -37,15 +39,16 @@ class Manager implements ManagerInterface {
    * Constructor.
    */
   public function __construct(
-    private readonly FileSystem $fileSystem,
+    private readonly FileSystemInterface $fileSystem,
     private readonly AccessCheck $accessCheck,
     private readonly AccountInterface $currentUser,
-    private readonly FileUrlGenerator $fileUrlGenerator
+    private readonly FileUrlGeneratorInterface $fileUrlGenerator,
   ) {}
 
   /**
    * Add an event exporter.
    */
+  #[\Override]
   public function addEventExporter(ExporterInterface $exporter, $priority = 0) {
     $this->eventExporters[$exporter->getId()] = $exporter;
     $this->eventExporterForms[$exporter->getFormId()] = $exporter;
@@ -56,15 +59,15 @@ class Manager implements ManagerInterface {
   /**
    * Get event exporters.
    */
-  public function getEventExporters(array $ids = NULL) {
-    return array_filter($this->eventExporters, static function (ExporterInterface $exporter) use ($ids) {
-        return NULL === $ids || in_array($exporter->getId(), $ids, TRUE);
-    });
+  #[\Override]
+  public function getEventExporters(?array $ids = NULL) {
+    return array_filter($this->eventExporters, static fn(ExporterInterface $exporter) => NULL === $ids || in_array($exporter->getId(), $ids, TRUE));
   }
 
   /**
    * Get event exporter.
    */
+  #[\Override]
   public function getEventExporter(string $id) {
     return $this->eventExporters[$id] ?? NULL;
   }
@@ -72,17 +75,18 @@ class Manager implements ManagerInterface {
   /**
    * Save exporter result to local file system.
    */
+  #[\Override]
   public function saveExporterResult(NodeInterface $node, Response $response) {
     $header = $response->getHeaderLine('content-disposition');
     if (preg_match('/filename="(?<filename>[^"]+)"/', $header, $matches)) {
       $filename = $matches['filename'];
 
       $url = $this->getExporterResultFileUrl($node, $filename);
-      $directory = dirname($url);
+      $directory = dirname((string) $url);
       $this->fileSystem->prepareDirectory($directory, FileSystem::CREATE_DIRECTORY);
       $filePath = $this->fileSystem->realpath($url);
-      $this->fileSystem->saveData((string) $response->getBody(), $filePath, FileSystem::EXISTS_REPLACE);
-      $this->fileSystem->saveData(json_encode($response->getHeaders()), $filePath . '.headers', FileSystem::EXISTS_REPLACE);
+      $this->fileSystem->saveData((string) $response->getBody(), $filePath, FileExists::Replace);
+      $this->fileSystem->saveData(json_encode($response->getHeaders()), $filePath . '.headers', FileExists::Replace);
 
       return $this->fileUrlGenerator->generateAbsoluteString($url);
     }
@@ -96,6 +100,7 @@ class Manager implements ManagerInterface {
    * @param string $uri
    *   The file uri.
    */
+  #[\Override]
   public function fileDownload(string $uri) {
     $info = $this->getExporterResultFileUrlInfo($uri);
     if (isset($info['nid'])) {
