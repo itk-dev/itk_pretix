@@ -2,7 +2,6 @@
 
 namespace Drupal\itk_pretix\Plugin\Field\FieldWidget;
 
-use Drupal\Core\Database\Exception\EventException;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
