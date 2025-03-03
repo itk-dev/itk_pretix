@@ -81,6 +81,8 @@ final class PretixDateFormatter extends FormatterBase {
       $elements[$delta] = [
         '#theme' => 'itk_pretix_date_entry',
         '#variables' => [
+          'uuid' => $item->uuid,
+          'name' => $item->getName(),
           'entity' => $items->getEntity(),
           'location' => $item->location,
           'address' => $item->address,
