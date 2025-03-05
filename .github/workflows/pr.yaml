@@ -81,3 +81,22 @@ jobs:
           ./scripts/rector
       - name: Check nothing has changed
         run: git diff --exit-code
+
+  coding-standards-check-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          docker compose run --rm node npm install
+          docker compose run --rm node npm run coding-standards-apply
+          docker compose run --rm node npm run coding-standards-check
+
+  coding-standards-check-assets-built:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          docker compose run --rm node npm install
+          docker compose run --rm node npm run build
+      - name: Check that nothing has changed
+        run: git diff --exit-code

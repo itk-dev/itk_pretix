@@ -46,22 +46,24 @@ The available exporters for a node can be run from
 
 ## Building assets
 
+We use [Encore](https://symfony.com/doc/current/frontend/encore/installation.html) to build assets.
+
 First, install tools and requirements:
 
 ```sh
-docker compose run --rm node yarn install
+docker compose run --rm node npm install
 ```
 
-Build for development:
+Build during development:
 
 ```sh
-docker compose run --rm node yarn encore dev --watch
+docker compose run --rm node npm run watch
 ```
 
 Build for production:
 
 ```sh
-docker compose run --rm node yarn encore production
+docker compose run --rm node npm run build
 ```
 
 ## Coding standards
@@ -82,9 +84,9 @@ docker compose run --rm phpfpm composer coding-standards-check
 Apply and check the coding standards in assets by running
 
 ```sh
-docker compose run --rm node yarn install
-docker compose run --rm node yarn coding-standards-apply
-docker compose run --rm node yarn coding-standards-check
+docker compose run --rm node npm install
+docker compose run --rm node npm run coding-standards-apply
+docker compose run --rm node npm run coding-standards-check
 ```
 
 ### Markdown

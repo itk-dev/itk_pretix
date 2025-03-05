@@ -1,6 +1,4 @@
 {
-  "build/exporters.css": "/build/exporters.css",
-  "build/exporters.js": "/build/exporters.js",
   "build/form.css": "/build/form.css",
   "build/form.js": "/build/form.js"
 }
