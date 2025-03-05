@@ -71,6 +71,8 @@ final class PretixDateWidget extends WidgetBase {
     $element['#type'] = 1 === $this->fieldDefinition->getFieldStorageDefinition()->getCardinality()
       ? 'fieldset' : 'container';
 
+    // Note: Some serialization breaks during adding and removing dates if we
+    // use $this->>validate(...) here.
     $element['#element_validate'][] = [$this, 'validate'];
     $element['#attributes']['class'][] = 'pretix-date-widget';
     if ($this->hideEndDate()) {
