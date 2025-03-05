@@ -50,7 +50,7 @@ const buildDateControls = (context) => {
 }
 
 $(() => {
-  Drupal.behaviors.itk_pretix_dawa = {
+  Drupal.behaviors.itk_pretix = {
     attach: (context, settings) => {
       buildDawaAutocompleteElements(context)
       buildDateControls(context)
