@@ -8,7 +8,6 @@ Encore
     .setPublicPath('/build')
 
     .addEntry('form', './assets/js/form.js')
-    .addEntry('exporters', './assets/js/exporters.js')
 
     .configureTerserPlugin(
       (options) => {
