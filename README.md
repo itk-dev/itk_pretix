@@ -30,6 +30,16 @@ If the value of `pretix_event_slug_template` is not empty, but `!nid` does not
 occur in the value, `-!nid` will be appended and the final template will be
 `dev-local-!nid`.
 
+### Drupal base URL
+
+For development, you may want to use a custom base URL for your Drupal site (overriding the base URL Drupal uses). To do
+this, set `$settings['itk_pretix']['drupal_base_url']` in your local settings, e.g.
+
+``` php
+# settings.local.php
+$settings['itk_pretix']['drupal_base_url'] = 'http://example.com:8888';
+```
+
 ## Exporters
 
 This module exposes a number of event Data exporters that are run via the pretix
