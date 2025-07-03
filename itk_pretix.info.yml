@@ -2,7 +2,7 @@ name: 'ITK Pretix'
 type: module
 description: 'A module using pretix API to generate events from field values'
 # We're autowiring services and need Drupal 10.2 or newer (cf. https://www.drupal.org/node/3366757)
-core_version_requirement: ^10.2
+core_version_requirement: ^10.2 || ^11
 package: 'ITK'
 dependencies:
   - drupal:field
