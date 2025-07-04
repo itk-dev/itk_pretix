@@ -1,5 +1,10 @@
 on: pull_request
+
 name: Review
+
+env:
+  COMPOSE_USER: runner
+
 jobs:
   changelog:
     runs-on: ubuntu-latest
@@ -8,7 +13,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
@@ -17,94 +22,81 @@ jobs:
 
       - name: Check that changelog has been updated.
         run: git diff --exit-code origin/${{ github.base_ref }} -- CHANGELOG.md && exit 1 || exit 0
-  test-composer-files:
-    name: Validate composer
+
+  composer-validate:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-versions: [ '8.1' ]
-        dependency-version: [ prefer-lowest, prefer-stable ]
     steps:
-      - uses: actions/checkout@master
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-          extensions: json
-          coverage: none
-          tools: composer:v2
-      # https://github.com/shivammathur/setup-php#cache-composer-dependencies
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+      - uses: actions/checkout@v4
       - name: Validate composer files
         run: |
-          composer validate --strict composer.json
-          # Check that dependencies resolve.
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
-  php-check-coding-standards:
-    name: PHP - Check Coding Standards
+          docker compose run --rm phpfpm composer validate
+      - name: Check that dependencies resolve
+        run: |
+          docker compose run --rm phpfpm composer update
+
+  check-composer-normalize:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-versions: [ '8.1' ]
-        dependency-version: [ prefer-lowest, prefer-stable ]
     steps:
-      - uses: actions/checkout@master
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-          extensions: json
-          coverage: none
-          tools: composer:v2
-      # https://github.com/shivammathur/setup-php#cache-composer-dependencies
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-      - name: Install Dependencies
-        run: |
-          composer install --no-interaction --no-progress
-      - name: PHPCS
-        run: |
-          composer coding-standards-check/phpcs
-  php-code-analysis:
-    name: PHP code analysis
+      - uses: actions/checkout@v4
+      - run: |
+          docker compose run --rm phpfpm composer install
+          docker compose run --rm phpfpm composer normalize --dry-run
+
+  coding-standards-check-phpcs:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php-versions: [ '8.1' ]
     steps:
-      - uses: actions/checkout@master
-      - name: Setup PHP, with composer and extensions
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-          extensions: json
-          coverage: none
-          tools: composer:v2
-      # https://github.com/shivammathur/setup-php#cache-composer-dependencies
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-      - name: Code analysis
-        run: |
+      - uses: actions/checkout@v4
+      - run: |
+          docker compose run --rm phpfpm composer install
+          docker compose run --rm phpfpm composer coding-standards-check/phpcs
+
+  coding-standards-check-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          docker compose run --rm markdownlint markdownlint '**/*.md'
+
+  code-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
           ./scripts/code-analysis
+
+  proxy-classes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          ./scripts/generate-proxy-classes
+      - name: Check nothing has changed
+        run: git diff --exit-code
+
+  rector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          ./scripts/rector
+      - name: Check nothing has changed
+        run: git diff --exit-code
+
+  coding-standards-check-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          docker compose run --rm node npm install
+          docker compose run --rm node npm run coding-standards-apply
+          docker compose run --rm node npm run coding-standards-check
+
+  coding-standards-check-assets-built:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          docker compose run --rm node npm install
+          docker compose run --rm node npm run build
+      - name: Check that nothing has changed
+        run: git diff --exit-code

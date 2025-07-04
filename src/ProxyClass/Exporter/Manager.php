@@ -1,8 +1,8 @@
 <?php
-// @codingStandardsIgnoreFile
+// phpcs:ignoreFile
 
 /**
- * This file was generated via php core/scripts/generate-proxy-class.php 'Drupal\itk_pretix\Exporter\Manager' "modules/contrib/itk_pretix/src".
+ * This file was generated via php core/scripts/generate-proxy-class.php 'Drupal\itk_pretix\Exporter\Manager' "web/modules/contrib/itk_pretix/src".
  */
 
 namespace Drupal\itk_pretix\ProxyClass\Exporter {
@@ -78,7 +78,7 @@ namespace Drupal\itk_pretix\ProxyClass\Exporter {
         /**
          * {@inheritdoc}
          */
-        public function getEventExporters(array $ids = NULL)
+        public function getEventExporters(?array $ids = NULL)
         {
             return $this->lazyLoadItself()->getEventExporters($ids);
         }
@@ -86,7 +86,7 @@ namespace Drupal\itk_pretix\ProxyClass\Exporter {
         /**
          * {@inheritdoc}
          */
-        public function getEventExporter($id)
+        public function getEventExporter(string $id)
         {
             return $this->lazyLoadItself()->getEventExporter($id);
         }
@@ -102,7 +102,7 @@ namespace Drupal\itk_pretix\ProxyClass\Exporter {
         /**
          * {@inheritdoc}
          */
-        public function fileDownload($uri)
+        public function fileDownload(string $uri)
         {
             return $this->lazyLoadItself()->fileDownload($uri);
         }

@@ -4,6 +4,7 @@ namespace Drupal\itk_pretix\Pretix;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use ItkDev\Pretix\Api\Client;
@@ -109,7 +110,7 @@ class OrderHelper extends AbstractHelper {
       $subEvents = $this->pretixClient->getSubEvents($event);
     }
     catch (\Exception $exception) {
-      throw  $this->clientException('Cannot get sub-events', $exception);
+      throw $this->clientException('Cannot get sub-events', $exception);
     }
     // Index by id.
     $subEvents = $this->indexCollection($subEvents, 'id');
@@ -154,7 +155,7 @@ class OrderHelper extends AbstractHelper {
    *
    * @throws \Exception
    */
-  public function getOrderLines($order) {
+  public function getOrderLines($order): never {
     throw new \RuntimeException(__METHOD__ . ' not implemented');
   }
 
@@ -164,7 +165,7 @@ class OrderHelper extends AbstractHelper {
    * @param \Drupal\node\NodeInterface $node
    *   The node.
    */
-  public function getAvailability(NodeInterface $node) {
+  public function getAvailability(NodeInterface $node): never {
     throw new \RuntimeException(__METHOD__ . ' not implemented');
   }
 
@@ -222,7 +223,10 @@ class OrderHelper extends AbstractHelper {
     $targetUrl = Url::fromRoute(
       'itk_pretix.pretix_webhook',
       [],
-      ['absolute' => TRUE]
+      [
+        'absolute' => TRUE,
+        'base_url' => Settings::get('itk_pretix')['drupal_base_url'] ?? NULL,
+      ]
     )->toString();
     $existingWebhook = NULL;
 

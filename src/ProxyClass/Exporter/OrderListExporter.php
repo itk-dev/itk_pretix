@@ -1,8 +1,8 @@
 <?php
-// @codingStandardsIgnoreFile
+// phpcs:ignoreFile
 
 /**
- * This file was generated via php core/scripts/generate-proxy-class.php 'Drupal\itk_pretix\Exporter\OrderListExporter' "modules/contrib/itk_pretix/src".
+ * This file was generated via php core/scripts/generate-proxy-class.php 'Drupal\itk_pretix\Exporter\OrderListExporter' "web/modules/contrib/itk_pretix/src".
  */
 
 namespace Drupal\itk_pretix\ProxyClass\Exporter {
@@ -190,14 +190,6 @@ namespace Drupal\itk_pretix\ProxyClass\Exporter {
         /**
          * {@inheritdoc}
          */
-        public function setLinkGenerator(\Drupal\Core\Utility\LinkGeneratorInterface $generator)
-        {
-            return $this->lazyLoadItself()->setLinkGenerator($generator);
-        }
-
-        /**
-         * {@inheritdoc}
-         */
         public function setLoggerFactory(\Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory)
         {
             return $this->lazyLoadItself()->setLoggerFactory($logger_factory);
@@ -233,14 +225,6 @@ namespace Drupal\itk_pretix\ProxyClass\Exporter {
         public function setStringTranslation(\Drupal\Core\StringTranslation\TranslationInterface $translation)
         {
             return $this->lazyLoadItself()->setStringTranslation($translation);
-        }
-
-        /**
-         * {@inheritdoc}
-         */
-        public function setUrlGenerator(\Drupal\Core\Routing\UrlGeneratorInterface $generator)
-        {
-            return $this->lazyLoadItself()->setUrlGenerator($generator);
         }
 
     }

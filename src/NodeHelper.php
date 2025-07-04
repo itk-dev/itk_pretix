@@ -40,7 +40,7 @@ class NodeHelper {
     private readonly EventHelper $eventHelper,
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ModuleHandlerInterface $moduleHandler,
-    MessengerInterface $messenger
+    MessengerInterface $messenger,
   ) {
     $this->setMessenger($messenger);
   }
@@ -117,7 +117,7 @@ class NodeHelper {
         $event = $client->getEvent($slug);
         $events[] = $event;
       }
-      catch (\Exception $exception) {
+      catch (\Exception) {
       }
     }
 
@@ -226,7 +226,7 @@ class NodeHelper {
 
     if (NULL !== $items) {
       foreach ($items as $item) {
-        foreach (['time_from', 'time_to'] as $key) {
+        foreach (['registration_deadline', 'time_from', 'time_to'] as $key) {
           if (isset($item->{$key}) && is_string($item->{$key})) {
             $item->{$key} = new DrupalDateTime($item->{$key});
           }

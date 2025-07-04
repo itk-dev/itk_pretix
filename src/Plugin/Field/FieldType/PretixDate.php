@@ -24,6 +24,7 @@ use Nicoeg\Dawa\Dawa;
  * @property string uuid
  * @property string location
  * @property string address
+ * @property DateTimeComputed registration_deadline
  * @property DateTimeComputed time_from
  * @property DateTimeComputed time_to
  * @property int spots
@@ -34,6 +35,7 @@ class PretixDate extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties['uuid'] = DataDefinition::create('string')
       ->setLabel(t('UUID'))
@@ -44,6 +46,16 @@ class PretixDate extends FieldItemBase {
     $properties['address'] = DataDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Address'))
       ->setRequired(TRUE);
+
+    $properties['registration_deadline_value'] = DataDefinition::create('datetime_iso8601')
+      ->setLabel(t('Registration deadline value'))
+      ->setRequired(TRUE);
+    $properties['registration_deadline'] = DataDefinition::create('any')
+      ->setLabel(t('Computed registration deadline'))
+      ->setDescription(t('The computed registration deadline DateTime object.'))
+      ->setComputed(TRUE)
+      ->setClass(DateTimeComputed::class)
+      ->setSetting('date source', 'registration_deadline_value');
 
     $properties['time_from_value'] = DataDefinition::create('datetime_iso8601')
       ->setLabel(t('Time from value'))
@@ -76,6 +88,7 @@ class PretixDate extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
     $schema = [
       'columns' => [
@@ -90,6 +103,11 @@ class PretixDate extends FieldItemBase {
         'address' => [
           'type' => 'varchar',
           'length' => 255,
+        ],
+        'registration_deadline_value' => [
+          'description' => 'The registration deadline value.',
+          'type' => 'varchar',
+          'length' => 20,
         ],
         'time_from_value' => [
           'description' => 'The time from value.',
@@ -124,6 +142,7 @@ class PretixDate extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function isEmpty() {
     $location = $this->get('location')->getValue();
     $timeFrom = $this->get('time_from_value')->getValue();
@@ -134,6 +153,7 @@ class PretixDate extends FieldItemBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function preSave() {
     if (empty($this->get('uuid')->getValue())) {
       $this->get('uuid')->setValue(\Drupal::service('uuid')->generate());
@@ -147,7 +167,7 @@ class PretixDate extends FieldItemBase {
           $this->addData(['coordinates' => $results[0]->adgangspunkt->koordinater]);
         }
       }
-      catch (\Exception $exception) {
+      catch (\Exception) {
       }
     }
   }

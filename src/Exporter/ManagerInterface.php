@@ -24,7 +24,7 @@ interface ManagerInterface {
    * @return array|ExporterInterface[]
    *   The exporters.
    */
-  public function getEventExporters(array $ids = NULL);
+  public function getEventExporters(?array $ids = NULL);
 
   /**
    * Get event exporter.

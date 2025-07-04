@@ -1,0 +1,21 @@
+services:
+  phpfpm:
+    image: itkdev/php8.3-fpm:latest
+    user: ${COMPOSE_USER:-deploy}
+    profiles:
+      - dev
+    volumes:
+      - .:/app
+
+  node:
+    image: node:22
+    profiles:
+      - dev
+    working_dir: /app
+    volumes:
+      - .:/app
+
+  markdownlint:
+    image: peterdavehello/markdownlint
+    volumes:
+      - .:/md

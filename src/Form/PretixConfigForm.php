@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\itk_pretix\Exporter\ManagerInterface as ExporterManagerInterface;
 use Drupal\itk_pretix\Pretix\EventHelper;
 use Drupal\itk_pretix\Pretix\OrderHelper;
+use Drupal\itk_pretix\Exporter\Manager as ExporterManager;
 use ItkDev\Pretix\Api\Client;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,52 +16,36 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * A configuration form for the pretix module.
  */
 final class PretixConfigForm extends ConfigFormBase {
-  /**
-   * The event helper.
-   *
-   * @var \Drupal\itk_pretix\Pretix\EventHelper
-   */
-  private $eventHelper;
-
-  /**
-   * The order helper.
-   *
-   * @var \Drupal\itk_pretix\Pretix\OrderHelper
-   */
-  private $orderHelper;
-
-  /**
-   * The exporter manager.
-   *
-   * @var ExporterManager
-   */
-  private $exporterManager;
 
   /**
    * {@inheritDoc}
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EventHelper $eventHelper, OrderHelper $orderHelper, ExporterManagerInterface $exporterManager) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    private readonly EventHelper $eventHelper,
+    private readonly OrderHelper $orderHelper,
+    private readonly ExporterManagerInterface $exporterManager,
+  ) {
     parent::__construct($config_factory);
-    $this->eventHelper = $eventHelper;
-    $this->orderHelper = $orderHelper;
-    $this->exporterManager = $exporterManager;
   }
 
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public static function create(ContainerInterface $container) {
     return new static(
           $container->get('config.factory'),
-          $container->get('itk_pretix.event_helper'),
-          $container->get('itk_pretix.order_helper'),
-          $container->get('itk_pretix.exporter_manager')
+          $container->get(EventHelper::class),
+          $container->get(OrderHelper::class),
+          $container->get(ExporterManager::class)
       );
   }
 
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   protected function getEditableConfigNames() {
     return [
       'itk_pretix.pretixconfig',
@@ -70,6 +55,7 @@ final class PretixConfigForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function getFormId() {
     return 'pretix_config_form';
   }
@@ -77,6 +63,7 @@ final class PretixConfigForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('itk_pretix.pretixconfig');
 
@@ -149,6 +136,7 @@ final class PretixConfigForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
@@ -165,6 +153,7 @@ final class PretixConfigForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  #[\Override]
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
@@ -175,7 +164,7 @@ final class PretixConfigForm extends ConfigFormBase {
         'api_token' => $form_state->getValue('api_token'),
       ]);
     }
-    catch (\Exception $exception) {
+    catch (\Exception) {
       $form_state->setErrorByName('pretix_url', $this->t('Cannot create pretix api client'));
       return;
     }
@@ -183,19 +172,19 @@ final class PretixConfigForm extends ConfigFormBase {
     try {
       $client->getOrganizers();
     }
-    catch (\Exception $exception) {
+    catch (\Exception) {
       $form_state->setErrorByName('pretix_url', $this->t('Cannot connect to pretix api'));
       return;
     }
 
-    $templateEventSlugs = array_unique(array_filter(array_map('trim', explode(PHP_EOL, $form_state->getValue('template_event_slugs')))));
+    $templateEventSlugs = array_unique(array_filter(array_map('trim', explode(PHP_EOL, (string) $form_state->getValue('template_event_slugs')))));
     $templateEvents = [];
     foreach ($templateEventSlugs as $eventSlug) {
       try {
         $event = $client->getEvent($eventSlug);
         $templateEvents[$event->getSlug()] = $event;
       }
-      catch (\Exception $exception) {
+      catch (\Exception) {
       }
     }
 
@@ -229,9 +218,9 @@ final class PretixConfigForm extends ConfigFormBase {
 
     try {
       $this->orderHelper->ensureWebhook($client);
-      $this->messenger->addStatus($this->t('pretix webhook created'));
+      $this->messenger()->addStatus($this->t('pretix webhook created'));
     }
-    catch (\Exception $exception) {
+    catch (\Exception) {
       $form_state->setErrorByName('pretix_url', $this->t('Cannot create webhook in pretix'));
       return;
     }

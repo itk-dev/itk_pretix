@@ -5,15 +5,11 @@
   "author": "ITK",
   "license": "ISC",
   "devDependencies": {
-    "@symfony/webpack-encore": "^0.28.2",
-    "dawa-autocomplete2": "^0.13.1",
-    "es6-object-assign": "^1.1.0",
-    "jquery": "^3.4.1",
-    "jquery-validation": "^1.19.1",
-    "node-sass": "^4.14.1",
-    "sass-loader": "^7.0.1",
-    "standard": "^14.3.4",
-    "terser-webpack-plugin": "^2.3.4"
+    "@symfony/webpack-encore": "^5.1.0",
+    "core-js": "^3.41.0",
+    "dawa-autocomplete2": "^1.1.0",
+    "standard": "^17.1.2",
+    "terser-webpack-plugin": "^5.3.12"
   },
   "scripts": {
     "dev": "encore dev",

@@ -1,0 +1,20 @@
+# https://hub.docker.com/_/drupal/
+
+services:
+  drupal:
+    image: drupal:10-apache
+    ports:
+      - 80
+    volumes:
+      - /var/www/html/modules
+      - /var/www/html/profiles
+      - /var/www/html/themes
+      # this takes advantage of the feature in Docker that a new anonymous
+      # volume (which is what we're creating here) will be initialized with the
+      # existing content of the image at the same location
+      - /var/www/html/sites
+      # Mount our code into the web/modules/contrib folder
+      - ../:/opt/drupal/web/modules/contrib/$MODULE_NAME
+    environment:
+      # Let the module path, i.e. the mounted path, be known in the container
+      MODULE_PATH: web/modules/contrib/$MODULE_NAME
