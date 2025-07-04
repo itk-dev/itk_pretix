@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.0] - 2025-02-28
 
+* [PR-73](https://github.com/itk-dev/itk_pretix/pull/73)
+  Updated npm packages
 * [PR-70](https://github.com/itk-dev/itk_pretix/pull/70)
   Cleaned up and refactored Code
 * [PR-69](https://github.com/itk-dev/itk_pretix/pull/69)
