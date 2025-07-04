@@ -109,7 +109,7 @@ class OrderHelper extends AbstractHelper {
       $subEvents = $this->pretixClient->getSubEvents($event);
     }
     catch (\Exception $exception) {
-      throw  $this->clientException('Cannot get sub-events', $exception);
+      throw $this->clientException('Cannot get sub-events', $exception);
     }
     // Index by id.
     $subEvents = $this->indexCollection($subEvents, 'id');
