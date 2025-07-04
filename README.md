@@ -1,7 +1,7 @@
 # ITK Pretix
 
 This Drupal 8 module creates a new field type that enables a link to
-https://pretix.eu/ to be made.
+<https://pretix.eu/> to be made.
 
 Through the Pretix API it is possible to add, change or remove Pretix
 event date entries from the Drupal interface.
@@ -30,6 +30,16 @@ If the value of `pretix_event_slug_template` is not empty, but `!nid` does not
 occur in the value, `-!nid` will be appended and the final template will be
 `dev-local-!nid`.
 
+### Drupal base URL
+
+For development, you may want to use a custom base URL for your Drupal site (overriding the base URL Drupal uses). To do
+this, set `$settings['itk_pretix']['drupal_base_url']` in your local settings, e.g.
+
+``` php
+# settings.local.php
+$settings['itk_pretix']['drupal_base_url'] = 'http://example.com:8888';
+```
+
 ## Exporters
 
 This module exposes a number of event Data exporters that are run via the pretix
@@ -46,22 +56,24 @@ The available exporters for a node can be run from
 
 ## Building assets
 
+We use [Encore](https://symfony.com/doc/current/frontend/encore/installation.html) to build assets.
+
 First, install tools and requirements:
 
 ```sh
-docker compose run --rm node yarn install
+docker compose run --rm node npm install
 ```
 
-Build for development:
+Build during development:
 
 ```sh
-docker compose run --rm node yarn encore dev --watch
+docker compose run --rm node npm run watch
 ```
 
 Build for production:
 
 ```sh
-docker compose run --rm node yarn encore production
+docker compose run --rm node npm run build
 ```
 
 ## Coding standards
@@ -82,7 +94,14 @@ docker compose run --rm phpfpm composer coding-standards-check
 Apply and check the coding standards in assets by running
 
 ```sh
-docker compose run --rm node yarn install
-docker compose run --rm node yarn coding-standards-apply
-docker compose run --rm node yarn coding-standards-check
+docker compose run --rm node npm install
+docker compose run --rm node npm run coding-standards-apply
+docker compose run --rm node npm run coding-standards-check
+```
+
+### Markdown
+
+``` sh
+docker compose run --rm markdownlint markdownlint '**/*.md' --fix
+docker compose run --rm markdownlint markdownlint '**/*.md'
 ```

@@ -7,14 +7,6 @@
       "js": [
         "/build/form.js"
       ]
-    },
-    "exporters": {
-      "css": [
-        "/build/exporters.css"
-      ],
-      "js": [
-        "/build/exporters.js"
-      ]
     }
   }
 }

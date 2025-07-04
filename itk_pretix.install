@@ -97,7 +97,7 @@ function itk_pretix_schema() {
 }
 
 /**
- * Implements hook_update_N().
+ * Add registration_deadline_value property.
  */
 function itk_pretix_update_10101(&$sandbox) {
   _itk_pretix_field_type_add_properties(

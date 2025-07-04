@@ -84,9 +84,6 @@ class PretixEventExportersController extends ControllerBase {
       '#node' => $node,
       '#message' => $message,
       '#exporter_forms' => $exporterForms,
-      '#attached' => [
-        'library' => ['itk_pretix/exporters'],
-      ],
     ];
   }
 

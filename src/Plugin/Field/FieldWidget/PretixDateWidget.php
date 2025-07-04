@@ -66,12 +66,19 @@ final class PretixDateWidget extends WidgetBase {
     /** @var \Drupal\itk_pretix\Plugin\Field\FieldType\PretixDate $item */
     $item = $items[$delta];
 
-    $element['#element_validate'][] = $this->validate(...);
+    // If cardinality is 1, ensure a label is output for the field by using a
+    // fieldset element.
+    $element['#type'] = 1 === $this->fieldDefinition->getFieldStorageDefinition()->getCardinality()
+      ? 'fieldset' : 'container';
+
+    // Note: Some serialization breaks during adding and removing dates if we
+    // use $this->>validate(...) here.
+    $element['#element_validate'][] = [$this, 'validate'];
     $element['#attributes']['class'][] = 'pretix-date-widget';
     if ($this->hideEndDate()) {
       $element['#attributes']['class'][] = 'hide-end-date';
     }
-    $element['#attached']['library'][] = 'itk_pretix/date';
+    $element['#attached']['library'][] = 'itk_pretix/itk-pretix';
 
     $element['uuid'] = [
       '#type' => 'hidden',
@@ -90,11 +97,6 @@ final class PretixDateWidget extends WidgetBase {
       '#title' => t('Address'),
       '#default_value' => $item->address ?? '',
       '#size' => 45,
-      '#attached' => [
-        'library' => [
-          'itk_pretix/itk-pretix',
-        ],
-      ],
       '#attributes' => ['class' => ['js-dawa-element']],
       '#required' => $element['#required'],
     ];
@@ -215,14 +217,6 @@ final class PretixDateWidget extends WidgetBase {
           '#type' => 'link',
           '#url' => $url,
         ],
-      ];
-    }
-
-    // If cardinality is 1, ensure a label is output for the field by wrapping
-    // it in a details element.
-    if (1 === $this->fieldDefinition->getFieldStorageDefinition()->getCardinality()) {
-      $element += [
-        '#type' => 'fieldset',
       ];
     }
 
