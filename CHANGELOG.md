@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Cleaned up and refactored Code
 * [PR-69](https://github.com/itk-dev/itk_pretix/pull/69)
   Added “Registration deadline” to date
+*[72](https://github.com/itk-dev/itk_pretix/pull/72)
+  Add drupal 11 compatibility
 
 ## [1.2.3]
 
