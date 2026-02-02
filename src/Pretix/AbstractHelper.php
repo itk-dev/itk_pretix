@@ -209,7 +209,7 @@ abstract class AbstractHelper {
 
     $result = $this->database
       ->merge('itk_pretix_events')
-      ->key(['nid' => $node->id()])
+      ->keys(['nid' => $node->id()])
       ->fields($fields)
       ->execute();
 
@@ -260,7 +260,7 @@ abstract class AbstractHelper {
 
     $this->database
       ->merge('itk_pretix_subevents')
-      ->key([
+      ->keys([
         'item_uuid' => $item->uuid,
         'pretix_subevent_id' => $subEvent->getId(),
       ])

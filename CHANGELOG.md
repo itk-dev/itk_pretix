@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-74](https://github.com/itk-dev/itk_pretix/pull/74)
+  Updated merge code to match drupal-11
+
 ## [1.3.0] - 2025-02-28
 
 * [PR-73](https://github.com/itk-dev/itk_pretix/pull/73)
