@@ -118,7 +118,7 @@ class EventHelper extends AbstractHelper {
     $eventData['event'] = $event->toArray();
 
     // Event settings.
-    $contactMail = $node->get('field_email_address')->getValue()[0]['value'] ?? NULL;
+    $contactMail = $settings->contact_mail;
     if (empty($contactMail)) {
       // In pretix the contact mail cannot be empty, but it can be null.
       $contactMail = NULL;
