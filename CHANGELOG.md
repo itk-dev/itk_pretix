@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-03-09
+
+* [PR-76](https://github.com/itk-dev/itk_pretix/pull/76)
+  Added contact_mail property
+
 ## [1.4.0] - 2026-02-02
 
 * [PR-74](https://github.com/itk-dev/itk_pretix/pull/74)
@@ -63,7 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Initial release
 
-[Unreleased]: https://github.com/itk-dev/itk_pretix/compare/1.4.0...HEAD
+[Unreleased]: https://github.com/itk-dev/itk_pretix/compare/1.5.0...HEAD
+[1.5.0]: https://github.com/itk-dev/itk_pretix/compare/1.4.0...1.5.0
 [1.4.0]: https://github.com/itk-dev/itk_pretix/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/itk-dev/itk_pretix/compare/1.2.3...1.3.0
 [1.2.3]: https://github.com/itk-dev/itk_pretix/compare/1.2.2...1.2.3

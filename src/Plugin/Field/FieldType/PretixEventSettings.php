@@ -18,6 +18,7 @@ use Drupal\Core\TypedData\DataDefinition;
  * )
  *
  * @property string template_event
+ * @property string contact_mail
  * @property bool synchronize_event
  */
 class PretixEventSettings extends FieldItemBase {
@@ -30,6 +31,9 @@ class PretixEventSettings extends FieldItemBase {
     FieldStorageDefinitionInterface $field_definition,
   ) {
     $properties['template_event'] = DataDefinition::create('string')
+      ->setLabel(new TranslatableMarkup('Template event'))
+      ->setRequired(TRUE);
+    $properties['contact_mail'] = DataDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Template event'))
       ->setRequired(TRUE);
     $properties['synchronize_event'] = DataDefinition::create('boolean')
@@ -51,6 +55,10 @@ class PretixEventSettings extends FieldItemBase {
         'template_event' => [
           'type' => 'varchar',
           'length' => 128,
+        ],
+        'contact_mail' => [
+          'type' => 'varchar',
+          'length' => 256,
         ],
         'synchronize_event' => [
           'type' => 'int',
