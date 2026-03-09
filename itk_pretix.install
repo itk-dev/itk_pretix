@@ -113,6 +113,21 @@ function itk_pretix_update_10101(&$sandbox) {
 }
 
 /**
+ * Add contact_mail property.
+ */
+function itk_pretix_update_10102(&$sandbox) {
+  _itk_pretix_field_type_add_properties(
+    'pretix_event_settings',
+    [
+      'contact_mail' => [
+        'type' => 'varchar',
+        'length' => 256,
+      ],
+    ]
+  );
+}
+
+/**
  * Lifted from https://drupal.stackexchange.com/a/295485.
  */
 function _itk_pretix_field_type_add_properties(string $field_type, array $columns): void {

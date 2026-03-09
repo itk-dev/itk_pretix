@@ -95,6 +95,13 @@ final class PretixEventSettingsWidget extends WidgetBase {
       '#required' => $element['#required'] && !empty($templateEventOptions),
     ];
 
+    $element['contact_mail'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Contact mail'),
+      '#default_value' => $items[$delta]->contact_mail,
+      '#required' => $element['#required'],
+    ];
+
     $element['synchronize_event'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Synchronize event in pretix'),
