@@ -15,17 +15,6 @@ Encore
 
     .addEntry('form', './assets/js/form.js')
 
-    .configureTerserPlugin(
-      (options) => {
-        options.terserOptions = {
-          output: {
-            // Comments in output breaks dawa-autocomplete2.
-            comments: false,
-          },
-        };
-      }
-    )
-
     .disableSingleRuntimeChunk()
     .autoProvidejQuery()
 

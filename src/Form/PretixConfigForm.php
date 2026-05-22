@@ -96,6 +96,15 @@ final class PretixConfigForm extends ConfigFormBase {
       '#required' => TRUE,
     ];
 
+    $form['adressevaelger_token'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Adressevaelger token'),
+      '#description' => $this->t('API token for the address lookup service (adressevaelger.dk)'),
+      '#maxlength' => 128,
+      '#size' => 64,
+      '#default_value' => $config->get('adressevaelger_token'),
+    ];
+
     $form['template_event_slugs'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Template events'),
@@ -144,6 +153,7 @@ final class PretixConfigForm extends ConfigFormBase {
       ->set('pretix_url', $form_state->getValue('pretix_url'))
       ->set('organizer_slug', $form_state->getValue('organizer_slug'))
       ->set('api_token', $form_state->getValue('api_token'))
+      ->set('adressevaelger_token', $form_state->getValue('adressevaelger_token'))
       ->set('template_event_slugs', $form_state->getValue('template_event_slugs'))
       ->set('event_exporters_message', $form_state->getValue('event_exporters_message'))
       ->set('event_exporters_enabled', array_filter($form_state->getValue('event_exporters_enabled')))

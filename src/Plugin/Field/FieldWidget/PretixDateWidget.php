@@ -79,6 +79,8 @@ final class PretixDateWidget extends WidgetBase {
       $element['#attributes']['class'][] = 'hide-end-date';
     }
     $element['#attached']['library'][] = 'itk_pretix/itk-pretix';
+    $config = \Drupal::config('itk_pretix.pretixconfig');
+    $element['#attached']['drupalSettings']['itk_pretix']['adressevaelger_token'] = $config->get('adressevaelger_token');
 
     $element['uuid'] = [
       '#type' => 'hidden',
@@ -97,8 +99,18 @@ final class PretixDateWidget extends WidgetBase {
       '#title' => t('Address'),
       '#default_value' => $item->address ?? '',
       '#size' => 45,
-      '#attributes' => ['class' => ['js-dawa-element']],
+      '#attributes' => ['class' => ['js-adressevaelger-element']],
       '#required' => $element['#required'],
+    ];
+    $element['geo_lat'] = [
+      '#type' => 'hidden',
+      '#default_value' => $item->data['coordinates'][0] ?? '',
+      '#attributes' => ['class' => ['js-geo-lat']],
+    ];
+    $element['geo_lng'] = [
+      '#type' => 'hidden',
+      '#default_value' => $item->data['coordinates'][1] ?? '',
+      '#attributes' => ['class' => ['js-geo-lng']],
     ];
 
     $element['registration_deadline_value'] = [
@@ -259,6 +271,13 @@ final class PretixDateWidget extends WidgetBase {
         // Adjust the date for storage.
         $item['time_to_value'] = $time_to->setTimezone($storage_timezone)->format($storage_format);
       }
+
+      if (!empty($item['geo_lat']) && !empty($item['geo_lng'])) {
+        $item['data'] = array_merge($item['data'] ?? [], [
+          'coordinates' => [(float) $item['geo_lat'], (float) $item['geo_lng']],
+        ]);
+      }
+      unset($item['geo_lat'], $item['geo_lng']);
     }
 
     return $values;
