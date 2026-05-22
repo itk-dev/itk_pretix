@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* [PR-77](https://github.com/itk-dev/itk_pretix/pull/77)
+  Replaced deprecated DAWA address service with Adressevaelger
+
 ## [1.5.0] - 2026-03-09
 
 * [PR-76](https://github.com/itk-dev/itk_pretix/pull/76)
