@@ -1,32 +1,40 @@
-/* global addEventListener, Drupal, fetch */
+/* global addEventListener, Drupal */
 
 import '../css/form.css'
-import 'dawa-autocomplete2/css/dawa-autocomplete2.css'
+import '../vendor/adressevaelger/adressevaelger.css'
+import { adressevaelger } from '../vendor/adressevaelger/adressevaelger.esm.js'
+import proj4 from 'proj4'
 
-const dawaAutocomplete = require('dawa-autocomplete2')
+proj4.defs('EPSG:25832', '+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs')
 
-const buildDawaAutocompleteElements = (context) => {
+const buildAddressAutocomplete = (context) => {
+  const token = window.drupalSettings?.itk_pretix?.adressevaelger_token
   context
-    .querySelectorAll('.field--type-pretix-date .js-dawa-element')
+    .querySelectorAll('.field--type-pretix-date .js-adressevaelger-element')
     .forEach(address => {
-      // Check if dawa autocomplete has already been initialized.
-      if (address.closest('.dawa-autocomplete-container')) {
+      if (address.closest('.autocomplete-container')) {
         return
       }
 
-      // Address autocomplete using https://dawa.aws.dk/.
-      const addressWrapper = document.createElement('div')
-      addressWrapper.setAttribute('class', 'dawa-autocomplete-container')
-      address.parentNode.replaceChild(addressWrapper, address)
-      addressWrapper.appendChild(address)
+      const wrapper = document.createElement('div')
+      wrapper.setAttribute('class', 'autocomplete-container')
+      address.parentNode.replaceChild(wrapper, address)
+      wrapper.appendChild(address)
 
-      dawaAutocomplete.dawaAutocomplete(address, {
+      const fieldWrapper = address.closest('.field--type-pretix-date')
+      const latField = fieldWrapper.querySelector('.js-geo-lat')
+      const lngField = fieldWrapper.querySelector('.js-geo-lng')
+
+      adressevaelger(address, {
         select: function (selected) {
-          fetch(selected.data.href)
-            .then(function (response) {
-              return response.json()
-            })
-        }
+          const coords = selected?.adresse?.husnummer?.adgangspunkt?.koordinater
+          if (coords && latField && lngField) {
+            const [lng, lat] = proj4('EPSG:25832', 'WGS84', [coords.x, coords.y])
+            latField.value = lat
+            lngField.value = lng
+          }
+        },
+        token
       })
     })
 }
@@ -51,11 +59,11 @@ const buildDateControls = (context) => {
 addEventListener('load', () => {
   Drupal.behaviors.itk_pretix = {
     attach: (context, settings) => {
-      buildDawaAutocompleteElements(context)
+      buildAddressAutocomplete(context)
       buildDateControls(context)
     }
   }
 
-  buildDawaAutocompleteElements(document)
+  buildAddressAutocomplete(document)
   buildDateControls(document)
 })
