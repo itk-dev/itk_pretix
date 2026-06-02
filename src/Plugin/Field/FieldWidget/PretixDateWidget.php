@@ -2,7 +2,7 @@
 
 namespace Drupal\itk_pretix\Plugin\Field\FieldWidget;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -39,7 +39,7 @@ final class PretixDateWidget extends WidgetBase {
     array $settings,
     array $third_party_settings,
     private readonly EventHelper $eventHelper,
-    private readonly ConfigFactoryInterface $configFactory,
+    private readonly ImmutableConfig $pretixConfig,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
   }
@@ -56,7 +56,7 @@ final class PretixDateWidget extends WidgetBase {
       $configuration['settings'],
       $configuration['third_party_settings'],
       $container->get(EventHelper::class),
-      $container->get('config.factory')
+      $container->get('config.factory')->get('itk_pretix.pretixconfig'),
     );
   }
 
@@ -82,7 +82,7 @@ final class PretixDateWidget extends WidgetBase {
       $element['#attributes']['class'][] = 'hide-end-date';
     }
     $element['#attached']['library'][] = 'itk_pretix/itk-pretix';
-    $element['#attached']['drupalSettings']['itk_pretix']['adressevaelger_token'] = $this->configFactory->get('itk_pretix.pretixconfig')->get('adressevaelger_token');
+    $element['#attached']['drupalSettings']['itk_pretix']['adressevaelger_token'] = $this->pretixConfig->get('adressevaelger_token') ?: 'adressevaelger123';
 
     $element['uuid'] = [
       '#type' => 'hidden',

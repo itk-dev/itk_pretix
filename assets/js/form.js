@@ -34,7 +34,7 @@ const buildAddressAutocomplete = (context) => {
             lngField.value = lng
           }
         },
-        token: token || 'adressevaelger123'
+        token: token
       })
     })
 }

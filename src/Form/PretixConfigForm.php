@@ -99,7 +99,9 @@ final class PretixConfigForm extends ConfigFormBase {
     $form['adressevaelger_token'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Adressevaelger token'),
-      '#description' => $this->t('API token for the address lookup service (adressevaelger.dk)'),
+      '#description' => $this->t('API token for the address lookup service (adressevaelger.dk). See <a href="@url">@url</a> for information on how to obtain a token. Leave empty to use the default public token.', [
+        '@url' => 'https://confluence.sdfi.dk/display/ADV/Brugerstyring',
+      ]),
       '#maxlength' => 128,
       '#size' => 64,
       '#default_value' => $config->get('adressevaelger_token'),
