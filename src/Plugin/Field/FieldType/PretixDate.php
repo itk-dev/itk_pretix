@@ -7,7 +7,6 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\datetime\DateTimeComputed;
-use Nicoeg\Dawa\Dawa;
 
 /**
  * Plugin implementation of the 'pretix_date' field type.
@@ -157,18 +156,6 @@ class PretixDate extends FieldItemBase {
   public function preSave() {
     if (empty($this->get('uuid')->getValue())) {
       $this->get('uuid')->setValue(\Drupal::service('uuid')->generate());
-    }
-
-    $address = $this->get('address')->getValue();
-    if (!empty($address)) {
-      try {
-        $results = (new Dawa())->accessAddressSearch($address);
-        if (isset($results[0]->adgangspunkt->koordinater)) {
-          $this->addData(['coordinates' => $results[0]->adgangspunkt->koordinater]);
-        }
-      }
-      catch (\Exception) {
-      }
     }
   }
 

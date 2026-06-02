@@ -7,7 +7,7 @@
   "devDependencies": {
     "@symfony/webpack-encore": "^5.1.0",
     "core-js": "^3.41.0",
-    "dawa-autocomplete2": "^1.1.0",
+    "proj4": "^2.12.0",
     "standard": "^17.1.2",
     "terser-webpack-plugin": "^5.3.12"
   },
@@ -15,7 +15,7 @@
     "dev": "encore dev",
     "watch": "encore dev --watch",
     "build": "encore production --progress",
-    "coding-standards-check": "standard 'assets/**/*.js'",
-    "coding-standards-apply": "standard 'assets/**/*.js' --fix"
+    "coding-standards-check": "standard --ignore 'assets/vendor/**' 'assets/**/*.js'",
+    "coding-standards-apply": "standard --ignore 'assets/vendor/**' 'assets/**/*.js' --fix"
   }
 }
